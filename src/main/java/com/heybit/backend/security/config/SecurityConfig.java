@@ -1,9 +1,5 @@
 package com.heybit.backend.security.config;
 
-import com.heybit.backend.security.jwt.JwtAuthenticationFilter;
-import com.heybit.backend.security.oauth.CustomOAuth2UserService;
-import com.heybit.backend.security.oauth.OAuth2LoginFailureHandler;
-import com.heybit.backend.security.oauth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +8,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -33,6 +28,9 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/login/**", "/oauth2/**", "/h2-console/**").permitAll()
             .anyRequest().authenticated()
+        )
+        .headers(headers -> headers
+            .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin) // H2 콘솔사용
         );
 
     // JWT 필터 설정 위임
