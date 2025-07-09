@@ -1,7 +1,10 @@
 package com.heybit.backend.domain.user;
 
 import com.heybit.backend.domain.BaseTimeEntity;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,10 +26,19 @@ public class UserEntity extends BaseTimeEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false, unique = true)
   private String email;
 
   private String nickname;
 
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
   private Role role;
+
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private UserStatus status;
+
+  private String provider;
 
 }
