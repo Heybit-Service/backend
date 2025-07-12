@@ -5,11 +5,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-@Component
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
   private final JwtTokenProvider jwtTokenProvider;
 
   public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
@@ -22,8 +25,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       FilterChain filterChain)
       throws ServletException, IOException {
 
-    // TODO: Authorization 헤더에서 JWT 추출 및 유효성 검증
+    String token = jwtTokenProvider.resolveToken(request);
 
+    try {
+      if (token != null && jwtTokenProvider.validateToken(token)) {
+        Authentication authentication = jwtTokenProvider.getAuthentication(token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        log.info("인증 성공 >> userId={} | method={} | uri={}",
+            jwtTokenProvider.extractUserId(token),
+            request.getMethod(),
+            request.getRequestURI());
+      }
+    } catch (Exception e) {
+      log.warn("JWT 인증 실패: {}", e.getMessage());
+      SecurityContextHolder.clearContext();
+    }
     filterChain.doFilter(request, response);
   }
 }

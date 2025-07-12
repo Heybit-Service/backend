@@ -21,6 +21,10 @@ public class JwtUtils {
     }
   }
 
+  public static String extractSubject(String token, Key key) {
+    return extractClaims(token, key).getSubject();
+  }
+
   public static long getRemainingTime(String token, Key signingKey) {
     Claims claims = extractClaims(token, signingKey);
     long now = System.currentTimeMillis();

@@ -71,6 +71,10 @@ public class JwtTokenProvider {
     return null;
   }
 
+  public String extractUserId(String token) {
+    return JwtUtils.extractSubject(token, key);
+  }
+
   public boolean validateToken(String token) {
     try {
       JwtUtils.extractClaims(token, key);
