@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 
 @Getter
 public class CustomOAuth2User extends DefaultOAuth2User {
+
   private final String email;
   private final Long id;
   private final String nickname;

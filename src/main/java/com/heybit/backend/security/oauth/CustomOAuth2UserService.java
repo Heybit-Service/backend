@@ -2,7 +2,6 @@ package com.heybit.backend.security.oauth;
 
 import com.heybit.backend.domain.user.UserEntity;
 import com.heybit.backend.domain.user.UserRepository;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtils {
+
   public static Claims extractClaims(String token, Key signingKey) {
     try {
       Jws<Claims> parsed = Jwts.parserBuilder()

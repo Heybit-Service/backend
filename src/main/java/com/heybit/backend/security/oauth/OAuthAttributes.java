@@ -11,11 +11,11 @@ import lombok.Getter;
 @Getter
 public class OAuthAttributes {
 
-  private Map<String, Object> attributes;
-  private String nameAttributeKey;
-  private String nickname;
-  private String email;
-  private String provider;
+  private final Map<String, Object> attributes;
+  private final String nameAttributeKey;
+  private final String nickname;
+  private final String email;
+  private final String provider;
 
   @Builder
   public OAuthAttributes(Map<String, Object> attributes, String nameAttributeKey, String nickname,

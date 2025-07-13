@@ -23,8 +23,8 @@ public class SecurityConfig {
         .csrf(csrf -> csrf.disable())
         .formLogin(form -> form.disable())
         .httpBasic(basic -> basic.disable())
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 완전 Stateless 구조
-
+        .sessionManagement(session -> session.sessionCreationPolicy(
+            SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
             .requestMatchers("/", "/login/**", "/oauth2/**", "/h2-console/**").permitAll()
             .anyRequest().authenticated()

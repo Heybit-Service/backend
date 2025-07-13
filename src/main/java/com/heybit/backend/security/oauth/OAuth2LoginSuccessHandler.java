@@ -48,7 +48,9 @@ public class OAuth2LoginSuccessHandler implements
 
   protected void clearAuthenticationAttributes(HttpServletRequest request) {
     var session = request.getSession(false);
-    if (session == null) return;
+    if (session == null) {
+      return;
+    }
     session.removeAttribute("SPRING_SECURITY_LAST_EXCEPTION");
   }
 }
