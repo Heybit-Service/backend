@@ -1,6 +1,6 @@
 package com.heybit.backend.security.oauth;
 
-import com.heybit.backend.domain.user.UserEntity;
+import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -31,7 +31,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     String email = attributes.getEmail();
 
-    UserEntity user = userRepository.findByEmail(email)
+    User user = userRepository.findByEmail(email)
         .orElseGet(() -> userRepository.save(attributes.toEntity()));
 
     return new CustomOAuth2User(

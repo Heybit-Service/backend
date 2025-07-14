@@ -1,4 +1,4 @@
-package com.heybit.backend.endpoint.test;
+package com.heybit.backend.test;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -2,7 +2,7 @@ package com.heybit.backend.security.oauth;
 
 
 import com.heybit.backend.domain.user.Role;
-import com.heybit.backend.domain.user.UserEntity;
+import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.user.UserStatus;
 import java.util.Map;
 import lombok.Builder;
@@ -58,8 +58,8 @@ public class OAuthAttributes {
         .build();
   }
 
-  public UserEntity toEntity() {
-    return UserEntity.builder()
+  public User toEntity() {
+    return User.builder()
         .email(email)
         .nickname(null)
         .role(Role.USER)
