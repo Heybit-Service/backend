@@ -46,6 +46,4 @@ public class ProductTimerRequest {
   private LocalDateTime endTime;
 
   private boolean withVotePost;
-
-  private MultipartFile imageFile;
 }

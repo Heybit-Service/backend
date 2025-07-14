@@ -11,6 +11,7 @@ import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -24,12 +25,12 @@ public class CreateTimerService implements CreateTimerUseCase {
   private final TimerNotificationScheduler timerNotificationScheduler;
 
   @Override
-  public Long execute(ProductTimerRequest request, Long userId) throws IOException {
+  public Long execute(ProductTimerRequest request, Long userId, MultipartFile imageFile) throws IOException {
 
     // 이미지가 존재할 경우 업로드
     String imageUrl = null;
-    if (request.getImageFile() != null && !request.getImageFile().isEmpty()) {
-      imageUrl = s3UploadComponent.upload(request.getImageFile(), userId);
+    if (imageFile != null && !imageFile.isEmpty()) {
+      imageUrl = s3UploadComponent.upload(imageFile, userId);
     }
 
     User user = userService.getById(userId);
