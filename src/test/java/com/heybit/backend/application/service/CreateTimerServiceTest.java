@@ -18,7 +18,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @SpringBootTest
@@ -40,9 +42,11 @@ class CreateTimerServiceTest {
   private ProductVotePostRepository productVotePostRepository;
 
   @Test
-  @DisplayName("타이머_생성_및_투표글_생성_정상작동")
+  @DisplayName("타이머 생성 성공 테스트")
   void createTimer_withVotePost_savesSuccessfully() throws Exception {
     // given
+    MultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test".getBytes());
+
     User user = userRepository.save(User.builder()
         .nickname("tester")
         .email("tester@example.com")
@@ -60,7 +64,7 @@ class CreateTimerServiceTest {
         .build();
 
     // when
-    Long timerId = createTimerService.execute(request, user.getId());
+    Long timerId = createTimerService.execute(request, user.getId(), file);
 
     // then
     ProductTimer timer = productTimerRepository.findById(timerId)
@@ -75,6 +79,8 @@ class CreateTimerServiceTest {
   @Test
   void createTimer_withoutVotePost_savesSuccessfully() throws Exception {
     // given
+    MultipartFile file = null;
+
     User user = userRepository.save(User.builder()
         .nickname("tester")
         .email("tester@example.com")
@@ -92,7 +98,7 @@ class CreateTimerServiceTest {
         .build();
 
     // when
-    Long timerId = createTimerService.execute(request, user.getId());
+    Long timerId = createTimerService.execute(request, user.getId(), file);
 
     // then
     ProductTimer timer = productTimerRepository.findById(timerId)
