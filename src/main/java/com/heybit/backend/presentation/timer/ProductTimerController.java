@@ -2,6 +2,7 @@ package com.heybit.backend.presentation.timer;
 
 import com.heybit.backend.application.usecase.CreateTimerUseCase;
 import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
+import com.heybit.backend.security.oauth.LoginUser;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +24,11 @@ public class ProductTimerController {
   private final CreateTimerUseCase createTimerUseCase;
 
   @PostMapping()
-  public ResponseEntity<Long> createTimer(@RequestPart("data") @Valid ProductTimerRequest request,
-      @RequestPart(value = "img", required = false) MultipartFile img) throws IOException {
-    Long userId = 1L; //TODO: @LoginUser 구현
+  public ResponseEntity<Long> createTimer(
+      @RequestPart("data") @Valid ProductTimerRequest request,
+      @RequestPart(value = "img", required = false) MultipartFile img,
+      @LoginUser Long userId
+  ) throws IOException {
     Long timerId = createTimerUseCase.execute(request, userId, img);
     return ResponseEntity.ok(timerId);
   }
