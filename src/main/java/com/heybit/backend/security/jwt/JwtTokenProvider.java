@@ -56,12 +56,11 @@ public class JwtTokenProvider {
 
   public Authentication getAuthentication(String token) {
     Claims claims = JwtUtils.extractClaims(token, key);
-    String userId = claims.getSubject();
+    Long userId = Long.valueOf(claims.getSubject());
     String role = (String) claims.get("role");
 
-    User principal = new User(userId, "",
+    return new UsernamePasswordAuthenticationToken(userId, null,
         Collections.singleton(new SimpleGrantedAuthority("ROLE_" + role)));
-    return new UsernamePasswordAuthenticationToken(principal, token, principal.getAuthorities());
   }
 
   public String resolveToken(HttpServletRequest request) {
