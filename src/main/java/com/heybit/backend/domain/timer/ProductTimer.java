@@ -43,4 +43,8 @@ public class ProductTimer extends BaseTimeEntity {
 
   @Enumerated(EnumType.STRING)
   private TimerStatus status;
+
+  public void updateState(TimerStatus status) {
+    this.status = status;
+  }
 }

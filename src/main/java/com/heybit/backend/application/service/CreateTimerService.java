@@ -4,6 +4,7 @@ import com.heybit.backend.application.scheduler.TimerNotificationScheduler;
 import com.heybit.backend.application.usecase.CreateTimerUseCase;
 import com.heybit.backend.domain.productinfo.ProductInfo;
 import com.heybit.backend.domain.timer.ProductTimer;
+import com.heybit.backend.domain.timer.TimerStatus;
 import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.infrastructure.s3.S3UploadComponent;
@@ -48,6 +49,7 @@ public class CreateTimerService implements CreateTimerUseCase {
         .productInfo(info)
         .startTime(request.getStartTime())
         .endTime(request.getEndTime())
+        .status(TimerStatus.IN_PROGRESS)
         .build();
 
     productInfoService.save(info);
