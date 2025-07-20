@@ -3,6 +3,7 @@ package com.heybit.backend.presentation.votepost;
 import com.heybit.backend.application.service.ProductVotePostService;
 import com.heybit.backend.presentation.votepost.dto.MyVotePostResponse;
 import com.heybit.backend.presentation.votepost.dto.ProductVotePostResponse;
+import com.heybit.backend.security.oauth.LoginUser;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,14 +23,14 @@ public class ProductVotePostController {
 
   @GetMapping
   public ResponseEntity<List<ProductVotePostResponse>> getAllInProgressPosts(
-      @RequestParam Long userId
+      @LoginUser Long userId
   ) {
     return ResponseEntity.ok(votePostService.getAllInProgressPosts(userId));
   }
 
   @GetMapping("/my/progress")
   public ResponseEntity<List<MyVotePostResponse>> getMyInProgressVotePosts(
-      @RequestParam Long userId
+      @LoginUser Long userId
   ) {
     return ResponseEntity.ok(votePostService.getMyInProgressVotePosts(userId));
   }
@@ -37,7 +38,7 @@ public class ProductVotePostController {
   @DeleteMapping("/{votePostId}")
   public ResponseEntity<Void> deleteVotePost(
       @PathVariable Long votePostId,
-      @RequestParam Long userId
+      @LoginUser Long userId
   ) {
     votePostService.deleteVotePost(votePostId, userId);
     return ResponseEntity.ok().build();

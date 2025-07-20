@@ -2,6 +2,7 @@ package com.heybit.backend.presentation.vote;
 
 
 import com.heybit.backend.application.service.VoteService;
+import com.heybit.backend.security.oauth.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,7 +23,7 @@ public class VoteController {
   public ResponseEntity<Void> vote(
       @PathVariable Long votePostId,
       @RequestParam boolean result,
-      @RequestParam Long userId // TODO: @LoginUser 구현 예정
+      @LoginUser Long userId
   ) {
     voteService.vote(votePostId, userId, result);
     return ResponseEntity.ok().build();
@@ -31,7 +32,7 @@ public class VoteController {
   @DeleteMapping("/{votePostId}/vote")
   public ResponseEntity<Void> cancelVote(
       @PathVariable Long votePostId,
-      @RequestParam Long userId
+      @LoginUser Long userId
   ) {
     voteService.cancelVote(votePostId, userId);
     return ResponseEntity.ok().build();
