@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -78,6 +79,19 @@ public class ProductVotePostService {
         .holdCount(holdCount)
         .holdPercent(holdPercent)
         .build();
+  }
+
+  @Transactional
+  public void deleteVotePost(Long votePostId, Long userId) {
+    ProductVotePost votePost = productVotePostRepository.findById(votePostId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표글입니다"));
+
+    if (!votePost.getProductTimer().getUser().getId().equals(userId)) {
+      throw new IllegalArgumentException("본인이 작성한 글만 삭제할 수 있습니다");
+    }
+
+    voteRepository.deleteByProductVotePostId(votePostId);
+    productVotePostRepository.deleteById(votePostId);
   }
 
   public void save(ProductVotePost votePost) {

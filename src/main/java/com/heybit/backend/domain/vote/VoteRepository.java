@@ -10,6 +10,8 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
   void deleteByUserIdAndProductVotePostId(Long userId, Long postId);
 
+  void deleteByProductVotePostId(Long postId);
+
   @Query("""
           SELECT v.productVotePost.id AS postId,
                  SUM(CASE WHEN v.result = true THEN 1 ELSE 0 END) AS buyCount,
