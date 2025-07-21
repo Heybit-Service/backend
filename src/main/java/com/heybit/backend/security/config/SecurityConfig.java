@@ -26,7 +26,7 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(
             SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/login/**", "/oauth2/**", "/h2-console/**").permitAll()
+            .requestMatchers("/", "/login/**", "/oauth2/**", "/h2-console/**","/test/**").permitAll()
             .anyRequest().authenticated()
         )
         .headers(headers -> headers

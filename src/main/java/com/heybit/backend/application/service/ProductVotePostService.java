@@ -5,6 +5,8 @@ import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.vote.VoteRepository.VoteStats;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.presentation.votepost.dto.MyVotePostResponse;
 import com.heybit.backend.presentation.votepost.dto.ProductVotePostResponse;
 import java.util.Collections;
@@ -84,10 +86,10 @@ public class ProductVotePostService {
   @Transactional
   public void deleteVotePost(Long votePostId, Long userId) {
     ProductVotePost votePost = productVotePostRepository.findById(votePostId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 투표글입니다"));
+        .orElseThrow(() -> new ApiException(ErrorCode.VOTE_POST_NOT_FOUND));
 
     if (!votePost.getProductTimer().getUser().getId().equals(userId)) {
-      throw new IllegalArgumentException("본인이 작성한 글만 삭제할 수 있습니다");
+      throw new ApiException(ErrorCode.NOT_AUTHOR_OF_VOTE_POST);
     }
 
     voteRepository.deleteByProductVotePostId(votePostId);
