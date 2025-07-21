@@ -1,8 +1,9 @@
 package com.heybit.backend.security.oauth;
 
 import com.heybit.backend.domain.user.UserRepository;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.security.jwt.JwtTokenProvider;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
@@ -36,14 +37,13 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     if (authentication == null || !authentication.isAuthenticated()) {
-      return null;
+      throw new ApiException(ErrorCode.UNAUTHORIZED);
     }
 
     Object principal = authentication.getPrincipal();
 
     if (!(principal instanceof Long)) {
-      String type = (principal == null) ? "null" : principal.getClass().getName();
-      throw new IllegalArgumentException("principal의 타입이 Long이 아닙니다. type: " + type);
+      throw new ApiException(ErrorCode.INVALID_TOKEN);
     }
 
     return principal;

@@ -3,6 +3,8 @@ package com.heybit.backend.application.service;
 
 import com.heybit.backend.domain.timer.ProductTimer;
 import com.heybit.backend.domain.timer.ProductTimerRepository;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,6 @@ public class ProductTimerService {
 
   public ProductTimer findById(Long id) {
     return productTimerRepository.findById(id)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 타이머입니다."));
+        .orElseThrow(() -> new ApiException(ErrorCode.TIMER_NOT_FOUND));
   }
 }

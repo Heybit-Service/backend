@@ -6,6 +6,8 @@ import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +23,10 @@ public class VoteService {
   @Transactional
   public void vote(Long votePostId, Long userId, boolean result) {
     ProductVotePost votePost = votePostRepository.findById(votePostId)
-        .orElseThrow(() -> new IllegalArgumentException("존재한지 않는 투표글입니다"));
+        .orElseThrow(() -> new ApiException(ErrorCode.VOTE_POST_NOT_FOUND));
 
     User user = userRepository.findById(userId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 유저입니다"));
+        .orElseThrow(() -> new ApiException(ErrorCode.USER_NOT_FOUND));
 
     // 중복 투표 방지
     if (voteRepository.existsByUserIdAndProductVotePostId(userId, votePostId)) {

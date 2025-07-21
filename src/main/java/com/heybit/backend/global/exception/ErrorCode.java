@@ -22,6 +22,7 @@ public enum ErrorCode {
   NOT_AUTHOR_OF_VOTE_POST(HttpStatus.FORBIDDEN, "본인이 작성한 글만 삭제할 수 있습니다."),
 
   // Authentication
+  UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
   INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
 
   private final HttpStatus status;
