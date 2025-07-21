@@ -1,4 +1,4 @@
-package com.heybit.backend.grobal.exception;
+package com.heybit.backend.global.exception;
 
 import lombok.Builder;
 import lombok.Getter;
