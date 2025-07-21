@@ -2,9 +2,9 @@ package com.heybit.backend.presentation.vote;
 
 
 import com.heybit.backend.application.service.VoteService;
+import com.heybit.backend.global.response.ApiResponseEntity;
 import com.heybit.backend.security.oauth.LoginUser;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,21 +20,21 @@ public class VoteController {
   private final VoteService voteService;
 
   @PostMapping("/{votePostId}/vote")
-  public ResponseEntity<Void> vote(
+  public ApiResponseEntity<Void> vote(
       @PathVariable Long votePostId,
       @RequestParam boolean result,
       @LoginUser Long userId
   ) {
     voteService.vote(votePostId, userId, result);
-    return ResponseEntity.ok().build();
+    return ApiResponseEntity.success();
   }
 
   @DeleteMapping("/{votePostId}/vote")
-  public ResponseEntity<Void> cancelVote(
+  public ApiResponseEntity<Void> cancelVote(
       @PathVariable Long votePostId,
       @LoginUser Long userId
   ) {
     voteService.cancelVote(votePostId, userId);
-    return ResponseEntity.ok().build();
+    return ApiResponseEntity.success();
   }
 }
