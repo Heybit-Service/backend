@@ -25,21 +25,13 @@ public class ProductTimerService {
     List<ProductTimer> timers = productTimerRepository.findProgressTimersOrderByPriority(userId);
 
     return timers.stream()
-        .map(timer -> {
-          boolean withVotePost = productVotePostRepository.existsByProductTimerId(timer.getId());
-
-          return ProductTimerResponse.builder()
-              .timerId(timer.getId())
-              .active(timer.getEndTime().isAfter(LocalDateTime.now()))
-              .name(timer.getProductInfo().getName())
-              .description(timer.getProductInfo().getDescription())
-              .amount(timer.getProductInfo().getAmount())
-              .endTime(timer.getEndTime())
-              .withVotePost(withVotePost)
-              .build();
-        })
+        .map(timer -> ProductTimerResponse.from(
+            timer,
+            productVotePostRepository.existsByProductTimerId(timer.getId())
+        ))
         .collect(Collectors.toList());
   }
+
 
   public ProductTimer save(ProductTimer timer) {
     return productTimerRepository.save(timer);
@@ -48,5 +40,8 @@ public class ProductTimerService {
   public ProductTimer findById(Long id) {
     return productTimerRepository.findById(id)
         .orElseThrow(() -> new ApiException(ErrorCode.TIMER_NOT_FOUND));
+  }
+
+  public void delete(ProductTimer timer) {
   }
 }
