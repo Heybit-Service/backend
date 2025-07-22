@@ -32,7 +32,6 @@ public class ProductTimerService {
         .collect(Collectors.toList());
   }
 
-
   public ProductTimer save(ProductTimer timer) {
     return productTimerRepository.save(timer);
   }
@@ -42,6 +41,7 @@ public class ProductTimerService {
         .orElseThrow(() -> new ApiException(ErrorCode.TIMER_NOT_FOUND));
   }
 
-  public void delete(ProductTimer timer) {
+  void delete(ProductTimer timer) {
+    productTimerRepository.delete(timer);
   }
 }

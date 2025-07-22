@@ -15,6 +15,7 @@ public enum ErrorCode {
 
   //Timer
   TIMER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 타이머를 찾을 수 없습니다."),
+  NOT_OWNER_OF_TIMER(HttpStatus.FORBIDDEN, "타이머에 대한 권한이 없습니다."),
 
   //VotePost, Vote
   ALREADY_VOTED(HttpStatus.BAD_REQUEST, "이미 투표한 글입니다."),

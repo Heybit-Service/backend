@@ -99,4 +99,13 @@ public class ProductVotePostService {
   public void save(ProductVotePost votePost) {
     productVotePostRepository.save(votePost);
   }
+
+  @Transactional
+  void deleteVotePostWithVotesByTimerId(Long timerId) {
+    productVotePostRepository.findByProductTimerId(timerId)
+        .ifPresent(votePost -> {
+          voteRepository.deleteByProductVotePostId(votePost.getId());
+          productVotePostRepository.delete(votePost);
+        });
+  }
 }

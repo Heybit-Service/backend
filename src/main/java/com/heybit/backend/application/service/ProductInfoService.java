@@ -14,4 +14,8 @@ public class ProductInfoService {
   public ProductInfo save(ProductInfo info) {
     return productInfoRepository.save(info);
   }
+
+  void delete(ProductInfo productInfo) {
+    productInfoRepository.delete(productInfo);
+  }
 }
