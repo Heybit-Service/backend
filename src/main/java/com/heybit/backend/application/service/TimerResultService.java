@@ -8,7 +8,9 @@ import com.heybit.backend.domain.timerresult.TimerResult;
 import com.heybit.backend.domain.timerresult.TimerResultRepository;
 import com.heybit.backend.global.exception.ApiException;
 import com.heybit.backend.global.exception.ErrorCode;
+import com.heybit.backend.presentation.timer.dto.CompletedTimerResponse;
 import com.heybit.backend.presentation.timerresult.dto.TimerResultRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,5 +43,13 @@ public class TimerResultService {
     timer.updateState(TimerStatus.COMPLETED);
 
     return result.getId();
+  }
+
+  public List<CompletedTimerResponse> getCompletedResultsByUserId(Long userId) {
+    return timerResultRepository
+        .findCompletedResultsOfTimerWithInfoByUserId(userId)
+        .stream()
+        .map(CompletedTimerResponse::from)
+        .toList();
   }
 }
