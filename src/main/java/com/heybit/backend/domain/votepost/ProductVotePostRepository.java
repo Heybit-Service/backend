@@ -44,6 +44,6 @@ public interface ProductVotePostRepository extends JpaRepository<ProductVotePost
       """)
   List<ProductVotePost> findMyInProgressPosts(@Param("userId") Long userId);
 
-
+  boolean existsByProductTimerId(Long id);
 }
 
