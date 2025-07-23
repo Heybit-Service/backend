@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class ProductTimerService {
   private final VoteRepository voteRepository;
 
   // 진행 중인 타이머(IN_progress)
+  @Transactional(readOnly = true)
   public List<ProductTimerResponse> getProgressTimer(Long userId) {
     List<ProductTimer> timers = productTimerRepository.findProgressTimersOrderByPriority(userId);
 
@@ -35,6 +37,7 @@ public class ProductTimerService {
         .collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
   public ProductTimerDetailResponse getProductTimerDetail(Long userId, Long timerId) {
     ProductTimer timer = productTimerRepository.findById(timerId)
         .orElseThrow(() -> new ApiException(ErrorCode.TIMER_NOT_FOUND));
