@@ -7,6 +7,7 @@ import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
 import com.heybit.backend.global.exception.ApiException;
 import com.heybit.backend.global.exception.ErrorCode;
+import com.heybit.backend.presentation.vote.dto.VoteStatsDto;
 import com.heybit.backend.presentation.votepost.dto.MyVotePostResponse;
 import com.heybit.backend.presentation.votepost.dto.ProductVotePostResponse;
 import java.util.Collections;
@@ -66,20 +67,16 @@ public class ProductVotePostService {
 
   private MyVotePostResponse toMyVotePostResponse(ProductVotePost post, VoteStats stats) {
     ProductInfo info = post.getProductTimer().getProductInfo();
-
-    int buyCount = stats != null ? stats.getBuyCount().intValue() : 0;
-    int holdCount = stats != null ? stats.getHoldCount().intValue() : 0;
-    int total = buyCount + holdCount;
-    int holdPercent = total == 0 ? 0 : (holdCount * 100) / total;
+    VoteStatsDto dto = (stats != null) ? VoteStatsDto.from(stats) : VoteStatsDto.empty();
 
     return MyVotePostResponse.builder()
         .name(info.getName())
         .description(info.getDescription())
         .amount(info.getAmount())
         .imageUrl(info.getImageUrl())
-        .buyCount(buyCount)
-        .holdCount(holdCount)
-        .holdPercent(holdPercent)
+        .buyCount(dto.getBuyCount())
+        .holdCount(dto.getHoldCount())
+        .holdPercent(dto.getHoldPercent())
         .build();
   }
 
@@ -99,4 +96,14 @@ public class ProductVotePostService {
   public void save(ProductVotePost votePost) {
     productVotePostRepository.save(votePost);
   }
+
+  @Transactional
+  void deleteVotePostWithVotesByTimerId(Long timerId) {
+    productVotePostRepository.findByProductTimerId(timerId)
+        .ifPresent(votePost -> {
+          voteRepository.deleteByProductVotePostId(votePost.getId());
+          productVotePostRepository.delete(votePost);
+        });
+  }
+
 }

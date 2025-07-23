@@ -16,4 +16,10 @@ public class S3UploadComponent {
 
     return null;
   }
+
+  public void delete(String imageUrl) {
+
+    // TODO: S3 업로드 삭제 로직 직성
+    log.info("delete file");
+  }
 }
