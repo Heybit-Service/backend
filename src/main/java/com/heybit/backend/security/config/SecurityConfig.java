@@ -1,6 +1,7 @@
 package com.heybit.backend.security.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -15,7 +16,9 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private final JwtSecurityConfig jwtSecurityConfig;
-  private final OAuth2SecurityConfig oAuth2SecurityConfig;
+  
+  @Autowired(required = false)
+  private OAuth2SecurityConfig oAuth2SecurityConfig;
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -36,8 +39,10 @@ public class SecurityConfig {
     // JWT 필터 설정 위임
     jwtSecurityConfig.configure(http);
 
-    // OAuth2 로그인 설정 위임
-    oAuth2SecurityConfig.configure(http);
+    // OAuth2 로그인 설정 위임 (OAuth2 설정이 있을 때만)
+    if (oAuth2SecurityConfig != null) {
+      oAuth2SecurityConfig.configure(http);
+    }
 
     return http.build();
   }
