@@ -4,11 +4,13 @@ import com.heybit.backend.security.oauth.CustomOAuth2UserService;
 import com.heybit.backend.security.oauth.OAuth2LoginFailureHandler;
 import com.heybit.backend.security.oauth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 @Configuration
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "spring.security.oauth2.client.registration.google.client-id")
 public class OAuth2SecurityConfig {
 
   private final CustomOAuth2UserService customOAuth2UserService;
