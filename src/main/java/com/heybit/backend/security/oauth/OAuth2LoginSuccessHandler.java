@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,9 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public class OAuth2LoginSuccessHandler implements
     AuthenticationSuccessHandler {
+
+  @Value("${app.frontend.base-url}")
+  private String frontendBaseUrl;
 
   private final JwtTokenProvider jwtTokenProvider;
 
@@ -32,9 +36,9 @@ public class OAuth2LoginSuccessHandler implements
     // TODO: 프론트와 리디렉션 URL 구조 확정 시 반영 예정(1)
     String targetUrl;
     if (nickname == null || nickname.isEmpty()) {
-      targetUrl = "http://localhost:3000/nickname-setup?token=" + jwt;
+      targetUrl = frontendBaseUrl + "/register?token=" + jwt;
     } else {
-      targetUrl = "http://localhost:3000/main?token=" + jwt;
+      targetUrl = frontendBaseUrl + "/dashboard/timer/progress?token=" + jwt;
     }
 
     log.info("[OAuth2 Success] JWT Token = {}", jwt);
@@ -42,8 +46,7 @@ public class OAuth2LoginSuccessHandler implements
 
     clearAuthenticationAttributes(request);
 
-    //TODO: 프론트와 리디렉션 URL 구조 확정 시 반영 예정(2)
-//    response.sendRedirect(targetUrl);
+    response.sendRedirect(targetUrl);
   }
 
   protected void clearAuthenticationAttributes(HttpServletRequest request) {

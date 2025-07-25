@@ -4,6 +4,10 @@ server:
 jwt:
   secret: ${JWT_SECRET:thisisaverylongsecretkeyforjwttoken123456789012345678901234567890}
 
+app:
+  frontend:
+    base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+
 spring:
   application:
     name: heybit-backend
@@ -41,7 +45,5 @@ spring:
             threadCount: 5
           jobStore:
             misfireThreshold: 60000
-
-
 
 
