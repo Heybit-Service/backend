@@ -3,6 +3,7 @@ package com.heybit.backend.application.scheduler;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import com.heybit.backend.domain.notification.NotificationType;
 import com.heybit.backend.infrastructure.quartz.NotificationJobSchedulerFactory;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,8 +45,8 @@ public class TimerNotificationSchedulerTest {
     notificationScheduler.scheduleTimerNotificationJob(now, end, timerId, name);
 
     // then
-    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_second_quarter", "TIMER_1")));
-    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_completed", "TIMER_1")));
+    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_SECOND_QUARTER", "TIMER_1")));
+    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_COMPLETED", "TIMER_1")));
   }
 
   @Test
@@ -60,16 +61,16 @@ public class TimerNotificationSchedulerTest {
     notificationScheduler.scheduleTimerNotificationJob(now, end, timerId, name);
 
     // 사전 확인
-    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_second_quarter", "TIMER_2")));
-    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_nearly_done", "TIMER_2")));
-    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_completed", "TIMER_2")));
+    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_SECOND_QUARTER", "TIMER_2")));
+    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_NEARLY_DONE", "TIMER_2")));
+    assertTrue(scheduler.checkExists(JobKey.jobKey("NotificationJob_COMPLETED", "TIMER_2")));
 
     // when
     notificationScheduler.cancelTimerNotificationJob(timerId);
 
     // then
-    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_second_quarter", "TIMER_2")));
-    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_nearly_done", "TIMER_2")));
-    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_completed", "TIMER_2")));
+    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_SECOND_QUARTER", "TIMER_2")));
+    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_NEARLY_DONE", "TIMER_2")));
+    assertFalse(scheduler.checkExists(JobKey.jobKey("NotificationJob_COMPLETED", "TIMER_2")));
   }
 }
