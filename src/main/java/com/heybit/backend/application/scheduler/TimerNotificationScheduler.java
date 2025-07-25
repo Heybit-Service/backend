@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -53,51 +54,56 @@ public class TimerNotificationScheduler {
           timerId,
           name,
           start.plusSeconds(duration / 2),
-          String.valueOf(NotificationType.SECOND_QUARTER));
+         NotificationType.SECOND_QUARTER.getCode()
+      );
 
       schedulerFactory.register(
           timerId,
           name,
           end.minusMinutes(10),
-          NotificationType.NEARLY_DONE.getCode());
+          NotificationType.NEARLY_DONE.getCode()
+      );
 
       schedulerFactory.register(
           timerId,
           name,
           end,
-          NotificationType.COMPLETED.getCode());
+          NotificationType.COMPLETED.getCode()
+      );
     } else {
       // 24시간 초과 타이머
       schedulerFactory.register(
           timerId,
           name,
           start.plusSeconds(duration / 4),
-          NotificationType.FIRST_QUARTER.getCode());
+          NotificationType.FIRST_QUARTER.getCode())
+      ;
 
       schedulerFactory.register(
           timerId,
           name,
           start.plusSeconds(duration * 3 / 4),
-          NotificationType.THIRD_QUARTER.getCode());
+          NotificationType.THIRD_QUARTER.getCode()
+      );
 
       schedulerFactory.register(
           timerId,
           name,
           end.minusMinutes(10),
-          NotificationType.NEARLY_DONE.getCode());
+          NotificationType.NEARLY_DONE.getCode())
+      ;
 
       schedulerFactory.register(
           timerId,
           name,
           end,
-          NotificationType.COMPLETED.getCode());
+          NotificationType.COMPLETED.getCode()
+      );
     }
   }
 
-  public void cancelTimerNotifications(ProductTimer timer) {
-
-    //TODO: 타이머 삭제시 타이머 알림 예약도 삭제
-
-    log.info("Cancel timer notifications for {}", timer.getProductInfo().getName());
+  public void cancelTimerNotificationJob(Long timerId) {
+    schedulerFactory.cancelAllByTimerId(timerId);
   }
+
 }

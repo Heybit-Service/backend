@@ -1,5 +1,6 @@
 package com.heybit.backend.infrastructure.quartz;
 
+import com.heybit.backend.domain.notification.NotificationType;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
+import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -45,6 +47,22 @@ public class NotificationJobSchedulerFactory {
     } catch (SchedulerException e) {
       log.error("스케줄 등록 실패", e);
       throw new RuntimeException(e);
+    }
+  }
+
+
+  public void cancelAllByTimerId(Long timerId) {
+
+    for (NotificationType type : NotificationType.values()) {
+      JobKey jobKey = JobKey.jobKey("NotificationJob_" + type.getCode(), "TIMER_" + timerId);
+      try {
+        if (scheduler.checkExists(jobKey)) {
+          scheduler.deleteJob(jobKey);
+          log.info("Job 삭제: {}", jobKey.getName());
+        }
+      } catch (SchedulerException e) {
+        log.error("Job 삭제 실패: timerId={}, type={}", timerId, type.getCode(), e);
+      }
     }
   }
 }
