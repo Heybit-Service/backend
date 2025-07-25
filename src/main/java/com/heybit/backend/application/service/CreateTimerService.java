@@ -63,8 +63,12 @@ public class CreateTimerService implements CreateTimerUseCase {
       productVotePostService.save(votePost);
     }
 
-    // 타이머에 대한 알림 예약 스케줄링
-    timerNotificationScheduler.scheduleTimerNotifications(timer);
+    timerNotificationScheduler.scheduleTimerNotificationJob(
+        timer.getStartTime(),
+        timer.getEndTime(),
+        timer.getId(),
+        info.getName() // ==  timer.getProductInfo.getName()
+    );
 
     return timer.getId();
   }

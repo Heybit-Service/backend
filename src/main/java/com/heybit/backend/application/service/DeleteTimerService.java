@@ -34,7 +34,7 @@ public class DeleteTimerService implements DeleteTimerUseCase {
       s3UploadComponent.delete(imageUrl);
     }
 
-    timerNotificationScheduler.cancelTimerNotifications(timer);
+    timerNotificationScheduler.cancelTimerNotificationJob(timer.getId());
     productVotePostService.deleteVotePostWithVotesByTimerId(timerId);
     productTimerService.delete(timer);
     productInfoService.delete(timer.getProductInfo());
