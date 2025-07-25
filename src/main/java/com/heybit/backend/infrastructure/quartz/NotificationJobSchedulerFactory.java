@@ -24,7 +24,7 @@ public class NotificationJobSchedulerFactory {
   private final Scheduler scheduler;
 
   public void register(Long timerId, String productName,
-      LocalDateTime scheduleTime, String type
+      LocalDateTime scheduleTime, NotificationType type
   ) {
     JobDataMap jobDataMap = new JobDataMap();
     jobDataMap.put("timerId", timerId);
@@ -54,14 +54,14 @@ public class NotificationJobSchedulerFactory {
   public void cancelAllByTimerId(Long timerId) {
 
     for (NotificationType type : NotificationType.values()) {
-      JobKey jobKey = JobKey.jobKey("NotificationJob_" + type.getCode(), "TIMER_" + timerId);
+      JobKey jobKey = JobKey.jobKey("NotificationJob_" + type, "TIMER_" + timerId);
       try {
         if (scheduler.checkExists(jobKey)) {
           scheduler.deleteJob(jobKey);
           log.info("Job 삭제: {}", jobKey.getName());
         }
       } catch (SchedulerException e) {
-        log.error("Job 삭제 실패: timerId={}, type={}", timerId, type.getCode(), e);
+        log.error("Job 삭제 실패: timerId={}, type={}", timerId, type, e);
       }
     }
   }

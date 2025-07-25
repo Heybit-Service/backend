@@ -39,14 +39,14 @@ public class TimerNotificationScheduler {
           timerId,
           name,
           start.plusSeconds(duration / 2),
-          NotificationType.SECOND_QUARTER.getCode()
+          NotificationType.SECOND_QUARTER
       );
 
       schedulerFactory.register(
           timerId,
           name,
           end,
-          NotificationType.COMPLETED.getCode())
+          NotificationType.COMPLETED)
       ;
     } else if (duration <= 86400) {
       // 24시간 이하 타이머
@@ -54,21 +54,21 @@ public class TimerNotificationScheduler {
           timerId,
           name,
           start.plusSeconds(duration / 2),
-         NotificationType.SECOND_QUARTER.getCode()
+         NotificationType.SECOND_QUARTER
       );
 
       schedulerFactory.register(
           timerId,
           name,
           end.minusMinutes(10),
-          NotificationType.NEARLY_DONE.getCode()
+          NotificationType.NEARLY_DONE
       );
 
       schedulerFactory.register(
           timerId,
           name,
           end,
-          NotificationType.COMPLETED.getCode()
+          NotificationType.COMPLETED
       );
     } else {
       // 24시간 초과 타이머
@@ -76,28 +76,28 @@ public class TimerNotificationScheduler {
           timerId,
           name,
           start.plusSeconds(duration / 4),
-          NotificationType.FIRST_QUARTER.getCode())
+          NotificationType.FIRST_QUARTER)
       ;
 
       schedulerFactory.register(
           timerId,
           name,
           start.plusSeconds(duration * 3 / 4),
-          NotificationType.THIRD_QUARTER.getCode()
+          NotificationType.THIRD_QUARTER
       );
 
       schedulerFactory.register(
           timerId,
           name,
           end.minusMinutes(10),
-          NotificationType.NEARLY_DONE.getCode())
+          NotificationType.NEARLY_DONE)
       ;
 
       schedulerFactory.register(
           timerId,
           name,
           end,
-          NotificationType.COMPLETED.getCode()
+          NotificationType.COMPLETED
       );
     }
   }
