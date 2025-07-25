@@ -1,18 +1,97 @@
 package com.heybit.backend.application.scheduler;
 
+import com.heybit.backend.domain.notification.NotificationType;
 import com.heybit.backend.domain.timer.ProductTimer;
+import com.heybit.backend.infrastructure.quartz.NotificationJob;
+import com.heybit.backend.infrastructure.quartz.NotificationJobSchedulerFactory;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component
+@RequiredArgsConstructor
 @Slf4j
 public class TimerNotificationScheduler {
 
-  public void scheduleTimerNotifications(ProductTimer timer) {
+  private final NotificationJobSchedulerFactory schedulerFactory;
 
-    //TODO: Quartz를 사용해 타이머 알림예약
+  public void scheduleTimerNotificationJob(
+      LocalDateTime start, LocalDateTime end, Long timerId, String name
+  ) {
+    long duration = Duration.between(start, end).getSeconds();
 
-    log.info("Schedule timer notifications for {}", timer.getProductInfo().getName());
+    if (duration <= 1800) {
+      // 30분 이하 타이머
+      schedulerFactory.register(
+          timerId,
+          name,
+          start.plusSeconds(duration / 2),
+          NotificationType.SECOND_QUARTER.getCode()
+      );
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          end,
+          NotificationType.COMPLETED.getCode())
+      ;
+    } else if (duration <= 86400) {
+      // 24시간 이하 타이머
+      schedulerFactory.register(
+          timerId,
+          name,
+          start.plusSeconds(duration / 2),
+          String.valueOf(NotificationType.SECOND_QUARTER));
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          end.minusMinutes(10),
+          NotificationType.NEARLY_DONE.getCode());
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          end,
+          NotificationType.COMPLETED.getCode());
+    } else {
+      // 24시간 초과 타이머
+      schedulerFactory.register(
+          timerId,
+          name,
+          start.plusSeconds(duration / 4),
+          NotificationType.FIRST_QUARTER.getCode());
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          start.plusSeconds(duration * 3 / 4),
+          NotificationType.THIRD_QUARTER.getCode());
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          end.minusMinutes(10),
+          NotificationType.NEARLY_DONE.getCode());
+
+      schedulerFactory.register(
+          timerId,
+          name,
+          end,
+          NotificationType.COMPLETED.getCode());
+    }
   }
 
   public void cancelTimerNotifications(ProductTimer timer) {
