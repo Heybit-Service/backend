@@ -46,4 +46,10 @@ spring:
           jobStore:
             misfireThreshold: 60000
 
-
+springdoc:
+  api-docs:
+    enabled: true       # OpenAPI 문서 활성화
+  swagger-ui:
+    enabled: true       #Swagger UI 사용 여부
+    path: /swagger-ui.html  # Swagger 접속 경로 지정
+  override-with-generic-response: false  # 자동 응답 포맷 생성 비활성화
