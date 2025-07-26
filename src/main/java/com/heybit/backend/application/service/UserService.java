@@ -7,6 +7,7 @@ import com.heybit.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
@@ -15,6 +16,22 @@ public class UserService {
 
   private final UserRepository userRepository;
 
+  @Transactional
+  public void updateNickname(Long userId, String newNickname) {
+    if (isNicknameDuplicated(newNickname)) {
+      throw new ApiException(ErrorCode.DUPLICATE_NICKNAME);
+    }
+
+    User user = getById(userId);
+    user.changeNickname(newNickname);
+  }
+
+  @Transactional(readOnly = true)
+  public boolean isNicknameDuplicated(String nickname) {
+    return userRepository.existsByNickname(nickname);
+  }
+
+  @Transactional
   public User getById(Long userId) {
     return userRepository.findById(userId)
         .orElseThrow(() -> {
