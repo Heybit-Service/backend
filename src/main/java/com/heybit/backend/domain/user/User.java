@@ -41,4 +41,8 @@ public class User extends BaseTimeEntity {
 
   private String provider;
 
+  public void changeNickname(String newNickname) {
+    this.nickname = newNickname;
+  }
+
 }

@@ -45,8 +45,6 @@ class CreateTimerServiceTest {
   @DisplayName("타이머 생성 성공 테스트")
   void createTimer_withVotePost_savesSuccessfully() throws Exception {
     // given
-    MultipartFile file = new MockMultipartFile("file", "test.jpg", "image/jpeg", "test".getBytes());
-
     User user = userRepository.save(User.builder()
         .nickname("tester")
         .email("tester@example.com")
@@ -64,7 +62,7 @@ class CreateTimerServiceTest {
         .build();
 
     // when
-    Long timerId = createTimerService.execute(request, user.getId(), file);
+    Long timerId = createTimerService.execute(request, user.getId(), null);
 
     // then
     ProductTimer timer = productTimerRepository.findById(timerId)

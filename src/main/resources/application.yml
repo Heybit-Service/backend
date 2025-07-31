@@ -13,7 +13,7 @@ spring:
     name: heybit-backend
 
   profiles:
-    include: oauth
+    include: oauth, aws
 
   jpa:
     hibernate:
