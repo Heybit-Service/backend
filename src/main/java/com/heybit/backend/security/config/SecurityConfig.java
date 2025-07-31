@@ -29,7 +29,16 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(
             SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/", "/login/**", "/oauth2/**", "/h2-console/**","/test/**").permitAll()
+            .requestMatchers(
+                "/",
+                "/login/**",
+                "/oauth2/**",
+                "/h2-console/**",
+                "/test/**",
+                "/v3/api-docs/**",
+                "/swagger-ui/**",
+                "/swagger-ui.html"
+            ).permitAll()
             .anyRequest().authenticated()
         )
         .headers(headers -> headers
