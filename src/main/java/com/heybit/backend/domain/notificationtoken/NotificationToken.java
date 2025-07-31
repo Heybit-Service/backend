@@ -33,4 +33,12 @@ public class NotificationToken extends BaseTimeEntity {
   private String token;
 
   private OsType  osType;
+
+  public void updateToken(String token) {
+    this.token = token;
+  }
+
+  public void updateUser(User user) {
+    this.user = user;
+  }
 }
