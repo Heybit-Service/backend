@@ -1,5 +1,6 @@
 package com.heybit.backend.domain.votepost;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -47,5 +48,7 @@ public interface ProductVotePostRepository extends JpaRepository<ProductVotePost
   boolean existsByProductTimerId(Long id);
 
   void deleteByProductTimerId(Long timerId);
+
+  Collection<ProductVotePost> findAllByProductTimerIdIn(List<Long> timerIds);
 }
 

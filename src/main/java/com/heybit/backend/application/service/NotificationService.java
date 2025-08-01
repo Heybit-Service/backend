@@ -5,15 +5,23 @@ import com.heybit.backend.domain.notification.NotificationRepository;
 import com.heybit.backend.domain.notification.NotificationType;
 import com.heybit.backend.domain.notification.ReferenceType;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
+import com.heybit.backend.presentation.notification.dto.NotificationResponse;
 import java.time.Duration;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
 
   private final NotificationRepository notificationRepository;
+  private final ProductVotePostRepository productVotePostRepository;
+  private final UserService userService;
 
   public void save(
       String name, Long userId, ReferenceType referenceType, Long referenceId, NotificationType type, Duration duration
@@ -25,9 +33,31 @@ public class NotificationService {
         .referenceId(referenceId)
         .type(type)
         .userId(userId)
+        .isRead(false)
         .build();
 
     notificationRepository.save(notification);
+  }
+
+  @Transactional(readOnly = true)
+  public List<NotificationResponse> getAllNotificationsByUserId(Long userId) {
+    List<Notification> notifications = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+    if (notifications.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Long> timerIds = notifications.stream()
+        .map(Notification::getReferenceId)
+        .toList();
+
+    Set<Long> voteLinkedTimerIds = productVotePostRepository.findAllByProductTimerIdIn(timerIds)
+        .stream()
+        .map(vp -> vp.getProductTimer().getId())
+        .collect(Collectors.toSet());
+
+    return notifications.stream()
+        .map(n -> NotificationResponse.from(n, voteLinkedTimerIds.contains(n.getReferenceId())))
+        .toList();
   }
 
 }
