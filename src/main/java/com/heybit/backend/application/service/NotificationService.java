@@ -33,7 +33,7 @@ public class NotificationService {
         .referenceId(referenceId)
         .type(type)
         .userId(userId)
-        .isRead(false)
+        .viewed(false)
         .build();
 
     notificationRepository.save(notification);
@@ -60,4 +60,11 @@ public class NotificationService {
         .toList();
   }
 
+  @Transactional
+  public void updateAllToRead(Long userId) {
+    List<Notification> unreadNotifications = notificationRepository.findAllByUserIdAndViewedFalse(userId);
+    for (Notification notification : unreadNotifications) {
+      notification.markAsViewed();
+    }
+  }
 }

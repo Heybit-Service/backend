@@ -40,5 +40,9 @@ public class Notification extends BaseTimeEntity {
 
   private ReferenceType referenceType;
 
-  private boolean isRead;
+  private boolean viewed;
+
+  public void markAsViewed() {
+    this.viewed = true;
+  }
 }
