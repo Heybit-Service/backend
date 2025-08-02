@@ -150,4 +150,31 @@ class NotificationServiceTest {
     assertThat(noVoteResponse.isWithVote()).isFalse();
   }
 
+  @Test
+  @DisplayName("사용자의 모든 알림을 읽음 처리한다")
+  void updateAllToRead_successfully() {
+    // given
+    Notification unread1 = notificationRepository.save(Notification.builder()
+        .userId(user.getId())
+        .type(NotificationType.COMPLETED)
+        .referenceType(ReferenceType.PRODUCT_TIMER)
+        .referenceId(1L)
+        .viewed(false)
+        .build());
+
+    Notification unread2 = notificationRepository.save(Notification.builder()
+        .userId(user.getId())
+        .type(NotificationType.NEARLY_DONE)
+        .referenceType(ReferenceType.PRODUCT_TIMER)
+        .referenceId(2L)
+        .viewed(false)
+        .build());
+
+    // when
+    notificationService.updateAllToRead(user.getId());
+
+    // then
+    List<Notification> notifications = notificationRepository.findAllByUserId(user.getId());
+    assertThat(notifications).allMatch(Notification::isViewed);
+  }
 }
