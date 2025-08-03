@@ -70,6 +70,11 @@ public class NotificationService {
     }
   }
 
+  @Transactional(readOnly = true)
+  public boolean checkUnreadNotifications(Long userId) {
+    return notificationRepository.existsByUserIdAndViewedFalse(userId);
+  }
+
 
   @Transactional
   public void deleteById(Long notificationId, Long userId) {
