@@ -13,19 +13,23 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class NotificationResponse {
 
+  private Long id;
   private Long referenceId;
   private NotificationType type;
   private String title;
   private String message;
   private boolean withVote;
+  private boolean viewed;
 
   public static NotificationResponse from(Notification entity, boolean withVote) {
     return NotificationResponse.builder()
-        .referenceId(entity.getReferenceId())
+        .id(entity.getId())
         .title(entity.getTitle())
         .type(entity.getType())
+        .referenceId(entity.getReferenceId())
         .message(entity.getBody())
         .withVote(withVote)
+        .viewed(entity.isViewed())
         .build();
   }
 }
