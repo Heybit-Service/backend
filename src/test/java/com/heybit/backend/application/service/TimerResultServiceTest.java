@@ -17,15 +17,12 @@ import com.heybit.backend.domain.user.Role;
 import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.user.UserStatus;
-import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.global.exception.ApiException;
 import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.presentation.timer.dto.CompletedTimerResponse;
 import com.heybit.backend.presentation.timerresult.dto.TimerResultRequest;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Timer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
-class ProductTimerResultServiceTest {
+class TimerResultServiceTest {
 
   @Autowired
   private TimerResultService timerResultService;

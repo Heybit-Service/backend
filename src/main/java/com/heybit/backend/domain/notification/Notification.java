@@ -2,6 +2,7 @@ package com.heybit.backend.domain.notification;
 
 import com.heybit.backend.domain.BaseTimeEntity;
 import com.heybit.backend.domain.timer.ProductTimer;
+import com.heybit.backend.domain.user.User;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,9 +36,13 @@ public class Notification extends BaseTimeEntity {
 
   private String body;
 
-  private String referenceType;
-
   private Long referenceId;
 
-  private Boolean isRead;
+  private ReferenceType referenceType;
+
+  private boolean viewed;
+
+  public void markAsViewed() {
+    this.viewed = true;
+  }
 }
