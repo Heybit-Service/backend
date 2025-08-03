@@ -3,6 +3,7 @@ package com.heybit.backend.presentation.timer.dto;
 import com.heybit.backend.domain.timer.TimerStatus;
 import com.heybit.backend.domain.timerresult.ResultType;
 import com.heybit.backend.domain.timerresult.TimerResult;
+import com.heybit.backend.global.util.DurationFormatter;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -40,32 +41,12 @@ public class CompletedTimerResponse {
         .success(success)
         .amount(extractAmount(timerResult, success))
         .durationMinutes(totalMinutes)
-        .durationMessage(formatDurationMessage(totalMinutes, success))
+        .durationMessage(DurationFormatter.formatWithSuffix(duration, success))
         .build();
   }
 
   private static int extractAmount(TimerResult timerResult, boolean success) {
     return success ? timerResult.getSavedAmount() : timerResult.getConsumedAmount();
-  }
-
-  private static String formatDurationMessage(long totalMinutes, boolean success) {
-    long days = totalMinutes / (60 * 24);
-    long hours = (totalMinutes % (60 * 24)) / 60;
-    long minutes = totalMinutes % 60;
-
-    StringBuilder sb = new StringBuilder();
-    if (days > 0) {
-      sb.append(days).append("일 ");
-    }
-    if (hours > 0) {
-      sb.append(hours).append("시간 ");
-    }
-    if (minutes > 0) {
-      sb.append(minutes).append("분 ");
-    }
-
-    sb.append(success ? "절제 성공" : "절제 실패");
-    return sb.toString().trim();
   }
 
   @Override
