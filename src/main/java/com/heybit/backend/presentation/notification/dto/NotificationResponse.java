@@ -21,7 +21,7 @@ public class NotificationResponse {
 
   public static NotificationResponse from(Notification entity, boolean withVote) {
     return NotificationResponse.builder()
-        .referenceId(entity.getId())
+        .referenceId(entity.getReferenceId())
         .title(entity.getTitle())
         .type(entity.getType())
         .message(entity.getBody())
