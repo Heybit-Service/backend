@@ -5,6 +5,8 @@ import com.heybit.backend.domain.notification.NotificationRepository;
 import com.heybit.backend.domain.notification.NotificationType;
 import com.heybit.backend.domain.notification.ReferenceType;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.presentation.notification.dto.NotificationResponse;
 import java.time.Duration;
 import java.util.Collections;
@@ -66,5 +68,23 @@ public class NotificationService {
     for (Notification notification : unreadNotifications) {
       notification.markAsViewed();
     }
+  }
+
+
+  @Transactional
+  public void deleteById(Long notificationId, Long userId) {
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new ApiException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+    if (!notification.getUserId().equals(userId)) {
+      throw new ApiException(ErrorCode.UNAUTHORIZED_ACCESS);
+    }
+
+    notificationRepository.delete(notification);
+  }
+
+  public void deleteAll(Long userId) {
+    List<Notification> notifications = notificationRepository.findAllByUserId(userId);
+    notificationRepository.deleteAllInBatch(notifications);
   }
 }

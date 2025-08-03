@@ -25,6 +25,10 @@ public enum ErrorCode {
   VOTE_POST_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 투표글이 존재하지 않습니다."),
   NOT_AUTHOR_OF_VOTE_POST(HttpStatus.FORBIDDEN, "본인이 작성한 글만 삭제할 수 있습니다."),
 
+  // Notification
+  NOTIFICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 알림을 찾을 수 없습니다."),
+  UNAUTHORIZED_ACCESS(HttpStatus.FORBIDDEN, "알림에 대한 권한이 없습니다."),
+
   // Authentication
   UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "인증이 필요합니다."),
   INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "유효하지 않은 토큰입니다.");
