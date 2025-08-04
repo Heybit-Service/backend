@@ -76,6 +76,7 @@ class ProductTimerServiceTest {
       int amount,
       LocalDateTime start,
       LocalDateTime endTime,
+      TimerStatus status,
       boolean withVotePost
   ) {
     var productInfo = productInfoRepository.save(
@@ -89,7 +90,7 @@ class ProductTimerServiceTest {
         ProductTimer.builder()
             .startTime(start)
             .endTime(endTime)
-            .status(TimerStatus.IN_PROGRESS)
+            .status(status)
             .productInfo(productInfo)
             .user(user)
             .build());
@@ -112,6 +113,7 @@ class ProductTimerServiceTest {
         10000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(1),
+        TimerStatus.IN_PROGRESS,
         true
     );
 
@@ -119,6 +121,7 @@ class ProductTimerServiceTest {
         20000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().minusMinutes(1),
+        TimerStatus.WAITING,
         true
     );
 
@@ -126,23 +129,23 @@ class ProductTimerServiceTest {
         10000,
         LocalDateTime.now().minusHours(2),
         LocalDateTime.now().plusHours(2),
+        TimerStatus.IN_PROGRESS,
         false
     );
 
-    List<ProductTimerResponse> responses = productTimerService.getProgressTimer(user.getId());
+    List<ProductTimerResponse> responses = productTimerService.getProgressAndWaitingTimers(user.getId());
 
     assertThat(responses).hasSize(3);
 
-    // 정렬 기준: 종료된 타이머가 먼저, 이후에는 생성일 순
+    // 정렬 기준: 종료된 타이머가 먼저, 이후에는 종료시점 최신순
     assertThat(responses)
-        .extracting(ProductTimerResponse::getName, ProductTimerResponse::isActive,
+        .extracting(ProductTimerResponse::getName, ProductTimerResponse::getStatus,
             ProductTimerResponse::isWithVotePost)
         .containsExactly(
-            tuple("종료시간 지남", false, true),
-            tuple("타이머1", true, true),
-            tuple("투표글 없음", true, false)
+            tuple("종료시간 지남",TimerStatus.WAITING.name() , true),
+            tuple("투표글 없음", TimerStatus.IN_PROGRESS.name(), false),
+            tuple("타이머1", TimerStatus.IN_PROGRESS.name(), true)
         );
-
   }
 
   @Test
@@ -153,6 +156,7 @@ class ProductTimerServiceTest {
         10000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(1),
+        TimerStatus.IN_PROGRESS,
         true
     );
 
@@ -160,6 +164,7 @@ class ProductTimerServiceTest {
         20000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().minusMinutes(1),
+        TimerStatus.COMPLETED,
         true
     );
 
@@ -169,7 +174,7 @@ class ProductTimerServiceTest {
     endedTimer.updateState(TimerStatus.COMPLETED);
     productTimerRepository.save(endedTimer);
 
-    List<ProductTimerResponse> responses = productTimerService.getProgressTimer(user.getId());
+    List<ProductTimerResponse> responses = productTimerService.getProgressAndWaitingTimers(user.getId());
 
     assertThat(responses).hasSize(1);
     assertThat(responses.get(0).getTimerId()).isEqualTo(activeTimerId);
@@ -185,6 +190,7 @@ class ProductTimerServiceTest {
         10000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(1),
+        TimerStatus.IN_PROGRESS,
         true
     );
 

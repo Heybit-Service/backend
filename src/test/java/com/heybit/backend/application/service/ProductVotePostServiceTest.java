@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.heybit.backend.domain.productinfo.Category;
+import com.heybit.backend.domain.productinfo.ProductInfo;
+import com.heybit.backend.domain.productinfo.ProductInfoRepository;
+import com.heybit.backend.domain.timer.ProductTimer;
 import com.heybit.backend.domain.timer.ProductTimerRepository;
 import com.heybit.backend.domain.timer.TimerStatus;
 import com.heybit.backend.domain.user.Role;
@@ -14,7 +17,6 @@ import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
-import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import com.heybit.backend.presentation.votepost.dto.MyVotePostResponse;
 import com.heybit.backend.presentation.votepost.dto.ProductVotePostResponse;
 import java.io.IOException;
@@ -43,10 +45,13 @@ class ProductVotePostServiceTest {
   private UserRepository userRepository;
 
   @Autowired
+  private ProductInfoRepository productInfoRepository;
+
+  @Autowired
   private ProductTimerRepository productTimerRepository;
 
   @Autowired
-  private ProductVotePostRepository votePostRepository;
+  private ProductVotePostRepository productVotePostRepository;
 
   @Autowired
   private VoteRepository voteRepository;
@@ -63,33 +68,59 @@ class ProductVotePostServiceTest {
         .build());
   }
 
-  private Long createTimer(String name, int amount, LocalDateTime start,
-      LocalDateTime endTime, Long userId)
-      throws IOException {
-    return createTimerService.execute(
-        ProductTimerRequest.builder()
+  private Long createTimer(
+      String name,
+      int amount,
+      LocalDateTime start,
+      LocalDateTime endTime,
+      TimerStatus status,
+      boolean withVotePost
+  ) {
+    var productInfo = productInfoRepository.save(
+        ProductInfo.builder()
             .name(name)
             .amount(amount)
-            .description(name + " 설명")
-            .category(Category.DAILY)
+            .category(Category.ETC)
+            .build());
+
+    var timer = productTimerRepository.save(
+        ProductTimer.builder()
             .startTime(start)
             .endTime(endTime)
-            .withVotePost(true)
-            .build(),
-        userId,
-        null
-    );
+            .status(status)
+            .productInfo(productInfo)
+            .user(user)
+            .build());
+
+    if (withVotePost) {
+      productVotePostRepository.save(
+          ProductVotePost.builder()
+              .productTimer(timer)
+              .build());
+    }
+
+    return timer.getId();
   }
 
   @Test
-  @DisplayName("IN_PROGRESS 상태인 투표글만 조회_성공테스트")
+  @DisplayName("IN_PROGRESS, WAITING 상태인 투표글 조회_성공테스트")
   void getInProgressVotePosts_success() throws IOException {
     Long inProgressId = createTimer(
         "IN_PROGRESS 상품",
         10000,
         LocalDateTime.now().minusMinutes(10),
         LocalDateTime.now().plusHours(1),
-        user.getId()
+        TimerStatus.IN_PROGRESS,
+        true
+    );
+
+    Long waitingId = createTimer(
+        "WAITING 상품",
+        10000,
+        LocalDateTime.now().minusMinutes(10),
+        LocalDateTime.now().plusHours(1),
+        TimerStatus.WAITING,
+        true
     );
 
     Long completedId = createTimer(
@@ -97,7 +128,8 @@ class ProductVotePostServiceTest {
         20000,
         LocalDateTime.now().minusHours(2),
         LocalDateTime.now().minusHours(1),
-        user.getId()
+        TimerStatus.COMPLETED,
+        true
     );
 
     Long abandonedId = createTimer(
@@ -105,14 +137,9 @@ class ProductVotePostServiceTest {
         30000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().minusHours(2),
-        user.getId()
+        TimerStatus.ABANDONED,
+        true
     );
-
-    productTimerRepository.findById(completedId)
-        .ifPresent(timer -> timer.updateState(TimerStatus.COMPLETED));
-
-    productTimerRepository.findById(abandonedId)
-        .ifPresent(timer -> timer.updateState(TimerStatus.ABANDONED));
 
     List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(user.getId());
 
@@ -128,9 +155,10 @@ class ProductVotePostServiceTest {
         15000,
         LocalDateTime.now().minusMinutes(10),
         LocalDateTime.now().plusHours(1),
-        user.getId()
+        TimerStatus.IN_PROGRESS,
+        true
     );
-    ProductVotePost votePost = votePostRepository.findByProductTimerId(timerId)
+    ProductVotePost votePost = productVotePostRepository.findByProductTimerId(timerId)
         .orElseThrow(() -> new IllegalStateException("투표글이 존재하지 않습니다"));
 
     voteRepository.save(Vote.builder()
@@ -152,7 +180,8 @@ class ProductVotePostServiceTest {
         300000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(3),
-        user.getId()
+        TimerStatus.IN_PROGRESS,
+        true
     );
 
     Long timerId2 = createTimer(
@@ -160,7 +189,8 @@ class ProductVotePostServiceTest {
         1000000,
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(2),
-        user.getId()
+        TimerStatus.IN_PROGRESS,
+        true
     );
 
     User user1 = userRepository.save(
@@ -179,9 +209,9 @@ class ProductVotePostServiceTest {
             .status(UserStatus.ACTIVE)
             .build());
 
-    ProductVotePost post1 = votePostRepository.findByProductTimerId(timerId1)
+    ProductVotePost post1 = productVotePostRepository.findByProductTimerId(timerId1)
         .orElseThrow();
-    ProductVotePost post2 = votePostRepository.findByProductTimerId(timerId2)
+    ProductVotePost post2 = productVotePostRepository.findByProductTimerId(timerId2)
         .orElseThrow();
 
     // post 1에 투표
