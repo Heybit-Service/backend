@@ -47,7 +47,7 @@ public class JobService {
 
     // 3. 타이머 상태 업데이트
     if (type == NotificationType.COMPLETED) {
-      timer.updateState(TimerStatus.COMPLETED);
+      timer.updateState(TimerStatus.WAITING);
     }
   }
 }
