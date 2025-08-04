@@ -12,7 +12,7 @@ import lombok.Getter;
 public class ProductTimerResponse {
 
   private Long timerId;
-  private boolean active;
+  private String status;;
   private String name;
   private String description;
   private int amount;
@@ -22,7 +22,7 @@ public class ProductTimerResponse {
   public static ProductTimerResponse from(ProductTimer timer, boolean withVotePost) {
     return ProductTimerResponse.builder()
         .timerId(timer.getId())
-        .active(timer.getEndTime().isAfter(LocalDateTime.now()))
+        .status(timer.getStatus().name())
         .name(timer.getProductInfo().getName())
         .description(timer.getProductInfo().getDescription())
         .amount(timer.getProductInfo().getAmount())

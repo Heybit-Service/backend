@@ -7,16 +7,16 @@ import org.springframework.data.repository.query.Param;
 
 public interface ProductTimerRepository extends JpaRepository<ProductTimer, Long> {
 
-  // IN_PROGRESS 상태인 타이머 중 종료된 것(endTime 이후, 타이머 결과가 등록되어야 완료로 상태가 변경됨)은 먼저 그 후 생성 순으로 정렬
   @Query("""
           select pt
           from ProductTimer pt
           where pt.user.id = :userId
-            and pt.status = 'IN_PROGRESS'
+            and pt.status in ('IN_PROGRESS', 'WAITING')
           order by 
-            case when pt.endTime < current_timestamp then 0 else 1 end asc,  
-            pt.createdAt asc
+            case pt.status when 'WAITING' then 0 else 1 end asc,
+            pt.endTime desc
       """)
-  List<ProductTimer> findProgressTimersOrderByPriority(@Param("userId") Long userId);
+  List<ProductTimer> findUncompletedTimersByUserOrderByWaitingFirstAndEndTimeDesc(
+      @Param("userId") Long userId);
 
 }

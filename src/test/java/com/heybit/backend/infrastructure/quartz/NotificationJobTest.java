@@ -1,6 +1,6 @@
 package com.heybit.backend.infrastructure.quartz;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.heybit.backend.application.service.NotificationService;
 import com.heybit.backend.domain.notification.NotificationType;
@@ -16,7 +16,6 @@ import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.user.UserStatus;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
-import com.heybit.backend.infrastructure.fcm.FcmService;
 import jakarta.persistence.EntityManager;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
@@ -113,14 +112,13 @@ class NotificationJobTest {
 
   @Test
   void testNotificationJobExecutesSuccessfully() throws Exception {
-    // Given - 테스트용 타이머를 저장
-
+    // given
     ProductTimer timer = createTimer("타이머1",
         10000,
         LocalDateTime.now(),
         LocalDateTime.now().plusHours(1),
         true
-    );// 이 함수는 테스트용 Timer를 만들어야 함
+    );
 
     JobDataMap jobDataMap = new JobDataMap();
     jobDataMap.put("timerId", timer.getId());
@@ -147,7 +145,7 @@ class NotificationJobTest {
 
     ProductTimer updatedTimer = productTimerRepository.findById(timer.getId())
         .orElseThrow(() -> new IllegalStateException("타이머 없음"));
-    assertEquals(TimerStatus.COMPLETED, updatedTimer.getStatus());
+    assertEquals(TimerStatus.WAITING, updatedTimer.getStatus()); // 타이머가 완료되면 결과입력를 대기하는 상태로 변함
   }
 
 }
