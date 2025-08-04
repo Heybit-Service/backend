@@ -21,6 +21,8 @@ public class CompletedTimerResponse {
   private final int amount;
   private final Long durationMinutes;
   private final String durationMessage;
+  private final LocalDateTime createdAt;
+  private final LocalDateTime endedAt;
 
   public static CompletedTimerResponse from(TimerResult timerResult) {
     var timer = timerResult.getProductTimer();
@@ -42,6 +44,8 @@ public class CompletedTimerResponse {
         .amount(extractAmount(timerResult, success))
         .durationMinutes(totalMinutes)
         .durationMessage(DurationFormatter.formatWithSuffix(duration, success))
+        .createdAt(timer.getCreatedAt())
+        .endedAt(timerResult.getCreatedAt())
         .build();
   }
 
