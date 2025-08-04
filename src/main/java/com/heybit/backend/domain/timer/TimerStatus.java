@@ -1,5 +1,5 @@
 package com.heybit.backend.domain.timer;
 
 public enum TimerStatus {
-  IN_PROGRESS, COMPLETED, ABANDONED
+  IN_PROGRESS, WAITING,  COMPLETED, ABANDONED
 }
