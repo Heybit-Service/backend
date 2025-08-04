@@ -33,8 +33,8 @@ public class ProductTimerController {
   private final ProductTimerService productTimerService;
 
   @GetMapping("/current")
-  public ApiResponseEntity<List<ProductTimerResponse>> getProgressTimers(@LoginUser Long userId) {
-    return ApiResponseEntity.success(productTimerService.getProgressTimer(userId));
+  public ApiResponseEntity<List<ProductTimerResponse>> getProgressAndWaitingTimers(@LoginUser Long userId) {
+    return ApiResponseEntity.success(productTimerService.getProgressAndWaitingTimers(userId));
   }
 
   @GetMapping("/{timerId}")

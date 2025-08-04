@@ -36,7 +36,6 @@ public class ProductTimerRequest {
   private Category category;
 
   @NotNull
-  @Future
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime startTime;
 

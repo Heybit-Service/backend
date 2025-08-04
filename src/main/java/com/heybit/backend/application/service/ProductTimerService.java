@@ -24,10 +24,11 @@ public class ProductTimerService {
   private final ProductVotePostRepository productVotePostRepository;
   private final VoteRepository voteRepository;
 
-  // 진행 중인 타이머(IN_progress)
+  // 진행 중인 타이머
   @Transactional(readOnly = true)
-  public List<ProductTimerResponse> getProgressTimer(Long userId) {
-    List<ProductTimer> timers = productTimerRepository.findProgressTimersOrderByPriority(userId);
+  public List<ProductTimerResponse> getProgressAndWaitingTimers(Long userId) {
+    List<ProductTimer> timers = productTimerRepository
+        .findUncompletedTimersByUserOrderByWaitingFirstAndEndTimeDesc(userId);
 
     return timers.stream()
         .map(timer -> ProductTimerResponse.from(
