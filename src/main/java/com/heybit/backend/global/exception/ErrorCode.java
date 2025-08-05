@@ -13,6 +13,9 @@ public enum ErrorCode {
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
   DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
 
+  //Survey
+  ALREADY_SURVEY(HttpStatus.BAD_REQUEST, "설문이 이미 존재합니다 "),
+
   //Timer
   TIMER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 타이머를 찾을 수 없습니다."),
   NOT_OWNER_OF_TIMER(HttpStatus.FORBIDDEN, "타이머에 대한 권한이 없습니다."),
