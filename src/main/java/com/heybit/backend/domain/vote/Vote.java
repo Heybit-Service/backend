@@ -5,6 +5,8 @@ import com.heybit.backend.domain.BaseTimeEntity;
 import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -43,5 +45,6 @@ public class Vote extends BaseTimeEntity {
   @JoinColumn(name = "product_vote_post_id", nullable = false)
   private ProductVotePost productVotePost;
 
-  private Boolean result;
+  @Enumerated(EnumType.STRING)
+  private VoteResultType result;
 }

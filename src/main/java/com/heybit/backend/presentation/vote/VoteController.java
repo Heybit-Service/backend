@@ -2,8 +2,10 @@ package com.heybit.backend.presentation.vote;
 
 
 import com.heybit.backend.application.service.VoteService;
+import com.heybit.backend.domain.vote.VoteResultType;
 import com.heybit.backend.global.response.ApiResponseEntity;
 import com.heybit.backend.security.oauth.LoginUser;
+import java.time.temporal.ValueRange;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +24,7 @@ public class VoteController {
   @PostMapping("/{votePostId}/vote")
   public ApiResponseEntity<Void> vote(
       @PathVariable Long votePostId,
-      @RequestParam boolean result,
+      @RequestParam VoteResultType result,
       @LoginUser Long userId
   ) {
     voteService.vote(votePostId, userId, result);

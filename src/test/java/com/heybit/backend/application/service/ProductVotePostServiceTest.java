@@ -15,8 +15,10 @@ import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.user.UserStatus;
 import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
+import com.heybit.backend.domain.vote.VoteResultType;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
+import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import com.heybit.backend.presentation.votepost.dto.MyVotePostResponse;
 import com.heybit.backend.presentation.votepost.dto.ProductVotePostResponse;
 import java.io.IOException;
@@ -164,7 +166,7 @@ class ProductVotePostServiceTest {
     voteRepository.save(Vote.builder()
         .user(user)
         .productVotePost(votePost)
-        .result(true)
+        .result(VoteResultType.HOLD)
         .build());
 
     List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(user.getId());
@@ -215,11 +217,11 @@ class ProductVotePostServiceTest {
         .orElseThrow();
 
     // post 1에 투표
-    voteRepository.save(Vote.builder().user(user1).productVotePost(post1).result(true).build());
-    voteRepository.save(Vote.builder().user(user2).productVotePost(post1).result(true).build());
+    voteRepository.save(Vote.builder().user(user1).productVotePost(post1).result(VoteResultType.HOLD).build());
+    voteRepository.save(Vote.builder().user(user2).productVotePost(post1).result(VoteResultType.HOLD).build());
 
     // post 2에 투표
-    voteRepository.save(Vote.builder().user(user1).productVotePost(post2).result(false).build());
+    voteRepository.save(Vote.builder().user(user1).productVotePost(post2).result(VoteResultType.BUY).build());
 
     List<MyVotePostResponse> result = votePostService.getMyInProgressVotePosts(user.getId());
 
@@ -237,9 +239,9 @@ class ProductVotePostServiceTest {
       throw new IllegalArgumentException("해당 결과가 없습니다");
     }
 
-    assertThat(resultByPost1.getBuyCount()).isEqualTo(2);
-    assertThat(resultByPost1.getHoldCount()).isEqualTo(0);
-    assertThat(resultByPost1.getHoldPercent()).isEqualTo(0);
+    assertThat(resultByPost1.getBuyCount()).isEqualTo(0);
+    assertThat(resultByPost1.getHoldCount()).isEqualTo(2);
+    assertThat(resultByPost1.getHoldPercent()).isEqualTo(100);
 
     MyVotePostResponse resultByPost2 = responseMap.get(
         post2.getProductTimer().getProductInfo().getName());
@@ -248,8 +250,8 @@ class ProductVotePostServiceTest {
     }
     ;
 
-    assertThat(resultByPost2.getBuyCount()).isEqualTo(0);
-    assertThat(resultByPost2.getHoldCount()).isEqualTo(1);
-    assertThat(resultByPost2.getHoldPercent()).isEqualTo(100);
+    assertThat(resultByPost2.getBuyCount()).isEqualTo(1);
+    assertThat(resultByPost2.getHoldCount()).isEqualTo(0);
+    assertThat(resultByPost2.getHoldPercent()).isEqualTo(0);
   }
 }

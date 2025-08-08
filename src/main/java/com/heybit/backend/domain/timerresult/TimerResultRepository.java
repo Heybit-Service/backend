@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface TimerResultRepository extends JpaRepository<TimerResult, Long> {
 
+  List<TimerResult> findByProductTimerIdIn(List<Long> timerIds);
+
   boolean existsByProductTimerId(Long productTimerId);
 
   Optional<TimerResult> findByProductTimerId(Long id);

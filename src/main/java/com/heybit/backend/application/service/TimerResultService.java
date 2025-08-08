@@ -11,6 +11,9 @@ import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.presentation.timer.dto.CompletedTimerResponse;
 import com.heybit.backend.presentation.timerresult.dto.TimerResultRequest;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,5 +54,21 @@ public class TimerResultService {
         .stream()
         .map(CompletedTimerResponse::from)
         .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public Map<Long, ResultType> getResultTypeMapByTimerIds(List<Long> timerIds) {
+    List<TimerResult> results = timerResultRepository.findByProductTimerIdIn(timerIds);
+
+    return results.stream()
+        .collect(Collectors.toMap(
+            result -> result.getProductTimer().getId(),
+            TimerResult::getResult
+        ));
+  }
+
+  public TimerResult findByProductTimerId(Long timerId) {
+    return timerResultRepository.findByProductTimerId(timerId)
+        .orElse(null);
   }
 }
