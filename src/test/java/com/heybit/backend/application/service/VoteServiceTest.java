@@ -1,10 +1,10 @@
 package com.heybit.backend.application.service;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.tuple;
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+
 import com.heybit.backend.domain.productinfo.Category;
 import com.heybit.backend.domain.productinfo.ProductInfo;
 import com.heybit.backend.domain.productinfo.ProductInfoRepository;
@@ -23,7 +23,6 @@ import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.vote.VoteResultType;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
-import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import com.heybit.backend.presentation.vote.dto.VotedPostResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -56,6 +55,9 @@ class VoteServiceTest {
 
   @Autowired
   private ProductInfoRepository productInfoRepository;
+
+  @Autowired
+  private TimerResultRepository timerResultRepository;
 
   @Autowired
   private CreateTimerService createTimerService;
@@ -186,5 +188,106 @@ class VoteServiceTest {
     assertThat(voteRepository.existsByUserIdAndProductVotePostId(user.getId(), votePost.getId()))
         .isFalse();
   }
-  
+
+  @DisplayName("내가 투표한 투표글의 정보를 조회한다")
+  @Test
+  void getMyVotedPosts() {
+    // given
+    User otherUser = userRepository.save(User.builder()
+        .nickname("other")
+        .email("other@example.com")
+        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .build());
+
+    User voteUser = userRepository.save(User.builder()
+        .nickname("vote")
+        .email("vote@example.com")
+        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .build());
+
+    Long progressTimerId = createTimer(
+        "에어팟",
+        200000,
+        LocalDateTime.now().minusMinutes(5),
+        LocalDateTime.now().plusHours(1),
+        TimerStatus.IN_PROGRESS,
+        true
+    ).getId();;
+
+    ProductVotePost progressVotePost = votePostRepository.findByProductTimerId(progressTimerId).orElseThrow();
+    voteService.vote(progressVotePost.getId(), otherUser.getId(), VoteResultType.HOLD);
+
+    ProductTimer completedTimer = createTimer(
+        "에어팟",
+        200000,
+        LocalDateTime.now().minusHours(1),
+        LocalDateTime.now().minusMinutes(5),
+        TimerStatus.IN_PROGRESS,
+        true
+    );
+
+    ProductVotePost completedVotePost = votePostRepository.findByProductTimerId(completedTimer.getId()).orElseThrow();
+    voteService.vote(completedVotePost.getId(), otherUser.getId(), VoteResultType.BUY);
+
+    timerResultRepository.save(TimerResult.builder()
+        .productTimer(completedTimer)
+        .result(ResultType.SAVED)
+        .savedAmount(completedTimer.getProductInfo().getAmount())
+        .consumedAmount(0)
+        .build());
+
+    completedTimer.updateState(TimerStatus.COMPLETED);
+
+    ProductTimer waitingTimer = createTimer(
+        "에어팟",
+        200000,
+        LocalDateTime.now().minusHours(1),
+        LocalDateTime.now().minusMinutes(5),
+        TimerStatus.IN_PROGRESS,
+        true
+    );
+
+    ProductVotePost waitingVotePost = votePostRepository.findByProductTimerId(waitingTimer.getId()).orElseThrow();
+    voteService.vote(waitingVotePost.getId(), otherUser.getId(), VoteResultType.HOLD);
+    waitingTimer.updateState(TimerStatus.WAITING);
+
+    ProductTimer abandonedTimer = createTimer(
+        "에어팟",
+        200000,
+        LocalDateTime.now().minusHours(1),
+        LocalDateTime.now().minusMinutes(5),
+        TimerStatus.IN_PROGRESS,
+        true
+    );
+
+    ProductVotePost abandonedVotePost = votePostRepository.findByProductTimerId(abandonedTimer.getId()).orElseThrow();
+    voteService.vote(abandonedVotePost.getId(), otherUser.getId(), VoteResultType.BUY);
+
+    timerResultRepository.save(TimerResult.builder()
+        .productTimer(abandonedTimer)
+        .result(ResultType.PURCHASED)
+        .savedAmount(0)
+        .consumedAmount(abandonedTimer.getProductInfo().getAmount())
+        .build());
+
+    abandonedTimer.updateState(TimerStatus.ABANDONED);
+
+    // when
+    List<VotedPostResponse> response =  voteService.getMyVotedPosts(otherUser.getId());
+
+    // then
+    assertThat(response).hasSize(4);
+
+    assertThat(response)
+        .extracting(VotedPostResponse::getStatus, VotedPostResponse::getMyVote)
+        .containsExactly(
+            tuple("결제 실패", "BUY"),
+            tuple("결과 미등록", "HOLD"),
+            tuple("결제 성공", "BUY"),
+            tuple("투표 중", "HOLD")
+        );
+  }
+
 }
