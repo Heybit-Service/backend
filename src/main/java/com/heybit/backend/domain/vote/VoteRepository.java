@@ -39,6 +39,7 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
           JOIN FETCH pvp.productTimer pt
           JOIN FETCH pt.productInfo pi
           WHERE v.user.id = :userId
+          ORDER BY v.createdAt DESC
       """)
   List<Vote> findAllByUserIdWithPostAndTimer(Long userId);
 
