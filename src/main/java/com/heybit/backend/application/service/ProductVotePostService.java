@@ -26,7 +26,7 @@ public class ProductVotePostService {
   private final VoteRepository voteRepository;
 
   public List<ProductVotePostResponse> getAllInProgressPosts(Long userId) {
-    List<ProductVotePost> posts = productVotePostRepository.findInProgressPostsUserNotVoted(userId);
+    List<ProductVotePost> posts = productVotePostRepository.findInProgressPostsUserNotVotedAndNotOwned(userId);
 
     return posts.stream()
         .map(post -> {

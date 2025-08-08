@@ -107,6 +107,13 @@ class ProductVotePostServiceTest {
   @Test
   @DisplayName("IN_PROGRESS, WAITING 상태인 투표글 조회_성공테스트")
   void getInProgressVotePosts_success() throws IOException {
+    User otherUser = userRepository.save(User.builder()
+        .nickname("other")
+        .email("other@example.com")
+        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .build());
+
     Long inProgressId = createTimer(
         "IN_PROGRESS 상품",
         10000,
@@ -143,7 +150,7 @@ class ProductVotePostServiceTest {
         true
     );
 
-    List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(user.getId());
+    List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(otherUser.getId());
 
     assertEquals(1, results.size());
     assertEquals("IN_PROGRESS 상품", results.get(0).getName());
