@@ -16,6 +16,7 @@ import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.user.UserStatus;
 import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
+import com.heybit.backend.domain.vote.VoteResultType;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
 import com.heybit.backend.global.exception.ApiException;
@@ -205,7 +206,7 @@ class ProductTimerServiceTest {
         Vote.builder()
             .productVotePost(productVotePost)
             .user(otherUser)
-            .result(false)
+            .result(VoteResultType.BUY)
             .build());
 
     ProductTimerDetailResponse response = productTimerService
@@ -215,9 +216,9 @@ class ProductTimerServiceTest {
 
     assertThat(response).isNotNull();
     assertThat(response.getName()).isEqualTo("타이머1");
-    assertThat(response.getBuyCount()).isEqualTo(0);
-    assertThat(response.getHoldCount()).isEqualTo(1);
-    assertThat(response.getHoldPercent()).isEqualTo(100);
+    assertThat(response.getBuyCount()).isEqualTo(1);
+    assertThat(response.getHoldCount()).isEqualTo(0);
+    assertThat(response.getHoldPercent()).isEqualTo(0);
   }
 
   @Test

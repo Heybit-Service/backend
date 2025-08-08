@@ -15,6 +15,7 @@ import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.user.UserStatus;
 import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
+import com.heybit.backend.domain.vote.VoteResultType;
 import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
 import com.heybit.backend.global.exception.ApiException;
@@ -95,7 +96,7 @@ class DeleteTimerServiceTest {
         Vote.builder()
             .user(user)
             .productVotePost(votePost)
-            .result(true)
+            .result(VoteResultType.HOLD)
             .build()
     ));
 
