@@ -15,8 +15,8 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
 
   @Query("""
           SELECT v.productVotePost.id AS postId,
-                 SUM(CASE WHEN v.result = true THEN 1 ELSE 0 END) AS buyCount,
-                 SUM(CASE WHEN v.result = false THEN 1 ELSE 0 END) AS holdCount
+              SUM(CASE WHEN v.result = 'BUY' THEN 1 ELSE 0 END) AS buyCount,
+              SUM(CASE WHEN v.result = 'HOLD' THEN 1 ELSE 0 END) AS holdCount
           FROM Vote v
           WHERE v.productVotePost.id IN :postIds
           GROUP BY v.productVotePost.id
@@ -24,14 +24,23 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
   List<VoteStats> countBuyHoldByPostIds(List<Long> postIds);
 
   @Query("""
-      SELECT v.productVotePost.id AS postId,
-             SUM(CASE WHEN v.result = true THEN 1 ELSE 0 END) AS buyCount,
-             SUM(CASE WHEN v.result = false THEN 1 ELSE 0 END) AS holdCount
-      FROM Vote v
-      WHERE v.productVotePost.id = :postId
-      GROUP BY v.productVotePost.id
-  """)
+          SELECT v.productVotePost.id AS postId,
+              SUM(CASE WHEN v.result = 'BUY' THEN 1 ELSE 0 END) AS buyCount,
+              SUM(CASE WHEN v.result = 'HOLD' THEN 1 ELSE 0 END) AS holdCount
+          FROM Vote v
+          WHERE v.productVotePost.id = :postId
+          GROUP BY v.productVotePost.id
+      """)
   Optional<VoteStats> countBuyHoldByPostId(Long postId);
+
+  @Query("""
+          SELECT v FROM Vote v
+          JOIN FETCH v.productVotePost pvp
+          JOIN FETCH pvp.productTimer pt
+          JOIN FETCH pt.productInfo pi
+          WHERE v.user.id = :userId
+      """)
+  List<Vote> findAllByUserIdWithPostAndTimer(Long userId);
 
   interface VoteStats {
 
