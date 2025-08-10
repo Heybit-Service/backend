@@ -38,7 +38,7 @@ public class NotificationJobSchedulerFactory {
 
     Trigger trigger = TriggerBuilder.newTrigger()
         .withIdentity("NotificationTrigger_" + type, "TIMER_" + timerId)
-        .startAt(Date.from(scheduleTime.atZone(ZoneId.systemDefault()).toInstant()))
+        .startAt(Date.from(scheduleTime.atZone(ZoneId.of("Asia/Seoul")).toInstant()))
         .build();
 
     try {
