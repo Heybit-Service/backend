@@ -13,24 +13,12 @@ spring:
     name: heybit-backend
 
   profiles:
+    active: ${SPRING_PROFILES_ACTIVE:local}
     include: oauth, aws
 
   jpa:
-    hibernate:
-      ddl-auto: create-drop
     show-sql: true
     defer-datasource-initialization: true
-
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test
-    username: sa
-    password:
-
-  h2:
-    console:
-      enabled: true
-      path: /h2-console
 
   quartz:
     job-store-type: memory
