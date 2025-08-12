@@ -42,9 +42,8 @@ public interface ProductVotePostRepository extends JpaRepository<ProductVotePost
           JOIN FETCH p.productTimer t
           JOIN FETCH t.productInfo
           WHERE t.user.id = :userId
-            AND t.status = 'IN_PROGRESS'
       """)
-  List<ProductVotePost> findMyInProgressPosts(@Param("userId") Long userId);
+  List<ProductVotePost> findMyAllPosts(@Param("userId") Long userId);
 
   boolean existsByProductTimerId(Long id);
 
