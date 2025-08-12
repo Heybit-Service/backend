@@ -15,7 +15,11 @@ public class VoteStatsDto {
   private final int holdPercent;
 
   public static VoteStatsDto empty() {
-    return new VoteStatsDto(0, 0, 0);
+    return VoteStatsDto.builder()
+        .buyCount(0)
+        .holdCount(0)
+        .holdPercent(0)
+        .build();
   }
 
   public static VoteStatsDto from(VoteStats stats) {
@@ -34,7 +38,11 @@ public class VoteStatsDto {
 
   private static int calculateHoldPercent(int buyCount, int holdCount) {
     int total = buyCount + holdCount;
-    return total == 0 ? 0 : (holdCount * 100 / total);
+    if (total == 0) {
+      return 0;
+    }
+    double percent = holdCount * 100.0 / total;
+    return (int) Math.round(percent);
   }
 
 }

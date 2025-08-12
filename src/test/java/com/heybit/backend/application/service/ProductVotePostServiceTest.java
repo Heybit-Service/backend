@@ -230,7 +230,7 @@ class ProductVotePostServiceTest {
     // post 2에 투표
     voteRepository.save(Vote.builder().user(user1).productVotePost(post2).result(VoteResultType.BUY).build());
 
-    List<MyVotePostResponse> result = votePostService.getMyInProgressVotePosts(user.getId());
+    List<MyVotePostResponse> result = votePostService.getMyVotePosts(user.getId());
 
     assertThat(result).hasSize(2);
 
@@ -246,9 +246,9 @@ class ProductVotePostServiceTest {
       throw new IllegalArgumentException("해당 결과가 없습니다");
     }
 
-    assertThat(resultByPost1.getBuyCount()).isEqualTo(0);
-    assertThat(resultByPost1.getHoldCount()).isEqualTo(2);
-    assertThat(resultByPost1.getHoldPercent()).isEqualTo(100);
+    assertThat(resultByPost1.getVoteStats().getBuyCount()).isEqualTo(0);
+    assertThat(resultByPost1.getVoteStats().getHoldCount()).isEqualTo(2);
+    assertThat(resultByPost1.getVoteStats().getHoldPercent()).isEqualTo(100);
 
     MyVotePostResponse resultByPost2 = responseMap.get(
         post2.getProductTimer().getProductInfo().getName());
@@ -257,8 +257,8 @@ class ProductVotePostServiceTest {
     }
     ;
 
-    assertThat(resultByPost2.getBuyCount()).isEqualTo(1);
-    assertThat(resultByPost2.getHoldCount()).isEqualTo(0);
-    assertThat(resultByPost2.getHoldPercent()).isEqualTo(0);
+    assertThat(resultByPost2.getVoteStats().getBuyCount()).isEqualTo(1);
+    assertThat(resultByPost2.getVoteStats().getHoldCount()).isEqualTo(0);
+    assertThat(resultByPost2.getVoteStats().getHoldPercent()).isEqualTo(0);
   }
 }

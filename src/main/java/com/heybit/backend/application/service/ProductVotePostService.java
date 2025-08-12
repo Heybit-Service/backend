@@ -42,18 +42,20 @@ public class ProductVotePostService {
         .toList();
   }
 
-  public List<MyVotePostResponse> getMyInProgressVotePosts(Long userId) {
+  public List<MyVotePostResponse> getMyVotePosts(Long userId) {
 
     List<ProductVotePost> myPosts =
-        productVotePostRepository.findMyInProgressPosts(userId);
+        productVotePostRepository.findMyAllPosts(userId);
+
+    if (myPosts.isEmpty()) {
+      return Collections.emptyList();
+    }
 
     List<Long> postIds = myPosts.stream()
         .map(ProductVotePost::getId)
         .collect(Collectors.toList());
 
-    if (postIds.isEmpty()) {
-      return Collections.emptyList();
-    }
+
 
     List<VoteRepository.VoteStats> statsList = voteRepository.countBuyHoldByPostIds(postIds);
 
@@ -61,24 +63,10 @@ public class ProductVotePostService {
         .collect(Collectors.toMap(VoteRepository.VoteStats::getPostId, v -> v));
 
     return myPosts.stream()
-        .map(post -> toMyVotePostResponse(post, statsMap.get(post.getId())))
+        .map(post -> MyVotePostResponse.from(post, statsMap.get(post.getId())))
         .collect(Collectors.toList());
   }
 
-  private MyVotePostResponse toMyVotePostResponse(ProductVotePost post, VoteStats stats) {
-    ProductInfo info = post.getProductTimer().getProductInfo();
-    VoteStatsDto dto = (stats != null) ? VoteStatsDto.from(stats) : VoteStatsDto.empty();
-
-    return MyVotePostResponse.builder()
-        .name(info.getName())
-        .description(info.getDescription())
-        .amount(info.getAmount())
-        .imageUrl(info.getImageUrl())
-        .buyCount(dto.getBuyCount())
-        .holdCount(dto.getHoldCount())
-        .holdPercent(dto.getHoldPercent())
-        .build();
-  }
 
   @Transactional
   public void deleteVotePost(Long votePostId, Long userId) {

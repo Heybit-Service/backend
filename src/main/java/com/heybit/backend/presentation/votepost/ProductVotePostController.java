@@ -27,11 +27,11 @@ public class ProductVotePostController {
     return ApiResponseEntity.success(votePostService.getAllInProgressPosts(userId));
   }
 
-  @GetMapping("/my/progress")
+  @GetMapping("/my")
   public ApiResponseEntity<List<MyVotePostResponse>> getMyInProgressVotePosts(
       @LoginUser Long userId
   ) {
-    return ApiResponseEntity.success(votePostService.getMyInProgressVotePosts(userId));
+    return ApiResponseEntity.success(votePostService.getMyVotePosts(userId));
   }
 
   @DeleteMapping("/{votePostId}")
