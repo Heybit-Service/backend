@@ -17,15 +17,15 @@ public interface ReportRepository extends JpaRepository<TimerResult, Long> {
 
   // 일별 합계
   @Query("""
-          SELECT tr.createdAt AS date,
-            COALESCE(SUM(tr.savedAmount), 0) AS savedAmount,
-            COALESCE(SUM(tr.consumedAmount), 0) AS consumedAmount
+          SELECT DATE(tr.createdAt) AS date,
+                 COALESCE(SUM(tr.savedAmount), 0) AS savedAmount,
+                 COALESCE(SUM(tr.consumedAmount), 0) AS consumedAmount
           FROM TimerResult tr
           JOIN tr.productTimer pt
           WHERE pt.user.id = :userId
             AND tr.createdAt BETWEEN :start AND :end
-          GROUP BY tr.createdAt
-          ORDER BY tr.createdAt
+          GROUP BY DATE(tr.createdAt)
+          ORDER BY DATE(tr.createdAt)
       """)
   List<DailySummaryStat> fetchDailySummaries(@Param("userId") Long userId,
       @Param("start") LocalDateTime start,
