@@ -14,9 +14,9 @@ public class MonthSummaryResponse {
 
   public static MonthSummaryResponse from(MonthSaveStat stat) {
     return MonthSummaryResponse.builder()
-        .year(stat.year())
-        .month(stat.month())
-        .savedAmount(stat.savedAmount())
+        .year(stat.getYear())
+        .month(stat.getMonth())
+        .savedAmount(stat.getSavedAmount())
         .build();
   }
 }

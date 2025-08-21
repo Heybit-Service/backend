@@ -15,14 +15,14 @@ public class CategoryFailureResponse {
 
   public static CategoryFailureResponse from(CategoryFailureStat stat, long totalFailCount) {
     double percent = totalFailCount > 0
-        ? (stat.failCount() * 100.0 / totalFailCount)
+        ? (stat.getFailCount() * 100.0 / totalFailCount)
         : 0.0;
 
     return new CategoryFailureResponse(
-        stat.category().name(),
-        stat.failCount(),
+        stat.getCategory(),
+        stat.getFailCount(),
         percent,
-        stat.totalAmount()
+        stat.getFailAmount()
     );
   }
 

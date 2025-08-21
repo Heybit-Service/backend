@@ -1,7 +1,7 @@
 package com.heybit.backend.presentation.report.dto;
 
 import com.heybit.backend.domain.report.stat.DailySummaryStat;
-import com.heybit.backend.domain.report.stat.MonthSaveStat;
+import java.time.format.DateTimeFormatter;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,9 +15,9 @@ public class DailySummaryResponse {
 
   public static DailySummaryResponse from(DailySummaryStat stat) {
     return DailySummaryResponse.builder()
-        .consumedAmount(stat.consumedAmount())
-        .savedAmount(stat.savedAmount())
-        .day(stat.day())
+        .consumedAmount(stat.getConsumedAmount())
+        .savedAmount(stat.getSavedAmount())
+        .day(stat.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
         .build();
   }
 }

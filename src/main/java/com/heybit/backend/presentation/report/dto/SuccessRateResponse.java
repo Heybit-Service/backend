@@ -14,9 +14,9 @@ public class SuccessRateResponse {
 
   public static SuccessRateResponse from(SuccessRateStat stat) {
     return new SuccessRateResponse(
-        stat.successRatePercent(),
-        stat.totalCount(),
-        stat.successCount()
+        stat.getSuccessRate(),
+        stat.getTotalCount(),
+        stat.getSuccessCount()
     );
   }
 
