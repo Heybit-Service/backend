@@ -7,6 +7,8 @@ jwt:
 app:
   frontend:
     base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,https://www.myheybit.com,https://myheybit.com}
 
 spring:
   application:
