@@ -17,6 +17,7 @@ public class ProductTimerDetailResponse {
   private String description;
   private String imageUrl;
   private int amount;
+  private String status;
   private LocalDateTime endTime;
   private boolean withVotePost;
   //투표가 있다면
@@ -24,25 +25,27 @@ public class ProductTimerDetailResponse {
   private int holdCount;
   private int holdPercent;
 
-  public static ProductTimerDetailResponse from(ProductTimer timer) {
+  public static ProductTimerDetailResponse from(ProductTimer timer, String status) {
     ProductInfo info = timer.getProductInfo();
     return ProductTimerDetailResponse.builder()
         .name(info.getName())
         .description(info.getDescription())
         .imageUrl(info.getImageUrl())
         .amount(info.getAmount())
+        .status(status)
         .endTime(timer.getEndTime())
         .withVotePost(false)
         .build();
   }
 
-  public static ProductTimerDetailResponse from(ProductTimer timer, VoteStatsDto dto) {
+  public static ProductTimerDetailResponse from(ProductTimer timer, VoteStatsDto dto, String status) {
     ProductInfo info = timer.getProductInfo();
     return ProductTimerDetailResponse.builder()
         .name(info.getName())
         .description(info.getDescription())
         .imageUrl(info.getImageUrl())
         .amount(info.getAmount())
+        .status(status)
         .endTime(timer.getEndTime())
         .withVotePost(true)
         .buyCount(dto.getBuyCount())

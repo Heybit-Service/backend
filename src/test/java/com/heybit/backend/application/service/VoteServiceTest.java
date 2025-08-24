@@ -283,10 +283,10 @@ class VoteServiceTest {
     assertThat(response)
         .extracting(VotedPostResponse::getStatus, VotedPostResponse::getMyVote)
         .containsExactly(
-            tuple("결제 실패", "BUY"),
-            tuple("결과 미등록", "HOLD"),
-            tuple("결제 성공", "BUY"),
-            tuple("투표 중", "HOLD")
+            tuple("PURCHASED", "BUY"),
+            tuple("WAITING", "HOLD"),
+            tuple("SAVED", "BUY"),
+            tuple("IN_PROGRESS", "HOLD")
         );
   }
 

@@ -1,11 +1,7 @@
 package com.heybit.backend.application.service;
 
-import com.heybit.backend.domain.timer.ProductTimer;
-import com.heybit.backend.domain.timer.TimerStatus;
 import com.heybit.backend.domain.timerresult.ResultType;
-import com.heybit.backend.domain.timerresult.TimerResult;
 import com.heybit.backend.domain.user.User;
-import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.domain.vote.Vote;
 import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.vote.VoteRepository.VoteStats;
@@ -14,7 +10,7 @@ import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
 import com.heybit.backend.global.exception.ApiException;
 import com.heybit.backend.global.exception.ErrorCode;
-import com.heybit.backend.global.resolver.VotePostStatusResolver;
+import com.heybit.backend.global.resolver.TimerStatusResolver;
 import com.heybit.backend.presentation.vote.dto.VotedPostResponse;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +79,7 @@ public class VoteService {
 
           VoteStats stats = statsMap.get(postId);
           ResultType resultStatus = resultStatusMap.get(timerId);
-          String statusString = VotePostStatusResolver.resolveStatus(
+          String statusString = TimerStatusResolver.resolveStatusCode(
               v.getProductVotePost().getProductTimer().getStatus(),
               resultStatus
           );

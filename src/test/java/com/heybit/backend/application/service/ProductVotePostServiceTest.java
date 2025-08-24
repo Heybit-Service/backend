@@ -107,6 +107,13 @@ class ProductVotePostServiceTest {
   @Test
   @DisplayName("IN_PROGRESS, WAITING 상태인 투표글 조회_성공테스트")
   void getInProgressVotePosts_success() throws IOException {
+    User otherUser = userRepository.save(User.builder()
+        .nickname("other")
+        .email("other@example.com")
+        .role(Role.USER)
+        .status(UserStatus.ACTIVE)
+        .build());
+
     Long inProgressId = createTimer(
         "IN_PROGRESS 상품",
         10000,
@@ -143,7 +150,7 @@ class ProductVotePostServiceTest {
         true
     );
 
-    List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(user.getId());
+    List<ProductVotePostResponse> results = votePostService.getAllInProgressPosts(otherUser.getId());
 
     assertEquals(1, results.size());
     assertEquals("IN_PROGRESS 상품", results.get(0).getName());
@@ -223,7 +230,7 @@ class ProductVotePostServiceTest {
     // post 2에 투표
     voteRepository.save(Vote.builder().user(user1).productVotePost(post2).result(VoteResultType.BUY).build());
 
-    List<MyVotePostResponse> result = votePostService.getMyInProgressVotePosts(user.getId());
+    List<MyVotePostResponse> result = votePostService.getMyVotePosts(user.getId());
 
     assertThat(result).hasSize(2);
 
@@ -239,9 +246,9 @@ class ProductVotePostServiceTest {
       throw new IllegalArgumentException("해당 결과가 없습니다");
     }
 
-    assertThat(resultByPost1.getBuyCount()).isEqualTo(0);
-    assertThat(resultByPost1.getHoldCount()).isEqualTo(2);
-    assertThat(resultByPost1.getHoldPercent()).isEqualTo(100);
+    assertThat(resultByPost1.getVoteStats().getBuyCount()).isEqualTo(0);
+    assertThat(resultByPost1.getVoteStats().getHoldCount()).isEqualTo(2);
+    assertThat(resultByPost1.getVoteStats().getHoldPercent()).isEqualTo(100);
 
     MyVotePostResponse resultByPost2 = responseMap.get(
         post2.getProductTimer().getProductInfo().getName());
@@ -250,8 +257,8 @@ class ProductVotePostServiceTest {
     }
     ;
 
-    assertThat(resultByPost2.getBuyCount()).isEqualTo(1);
-    assertThat(resultByPost2.getHoldCount()).isEqualTo(0);
-    assertThat(resultByPost2.getHoldPercent()).isEqualTo(0);
+    assertThat(resultByPost2.getVoteStats().getBuyCount()).isEqualTo(1);
+    assertThat(resultByPost2.getVoteStats().getHoldCount()).isEqualTo(0);
+    assertThat(resultByPost2.getVoteStats().getHoldPercent()).isEqualTo(0);
   }
 }
