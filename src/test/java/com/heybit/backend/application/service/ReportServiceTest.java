@@ -159,12 +159,12 @@ class ReportServiceTest extends MysqlTestContainerBase {
         .anySatisfy(c -> assertThat(c.getCategory()).isEqualTo("TRANSPORT"));
 
     // 요일/시간대 집계 확인
-    assertThat(response.getDayAndTimeFailures().getByWeekday())
+    assertThat(response.getRegisteredCounts().getByWeekday())
         .containsKeys(
             "MONDAY", "TUESDAY", "WEDNESDAY",
             "THURSDAY", "FRIDAY", "SATURDAY", "SUNDAY"
         );
-    assertThat(response.getDayAndTimeFailures().getByTimeZone())
+    assertThat(response.getRegisteredCounts().getByTimeZone())
         .containsKeys(
             "NIGHT", "MORNING", "LUNCH", "AFTERNOON", "EVENING"
         );

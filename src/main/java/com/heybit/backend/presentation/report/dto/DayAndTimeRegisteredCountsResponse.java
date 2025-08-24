@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class DayAndTimeFailuresResponse {
+public class DayAndTimeRegisteredCountsResponse {
 
   private final Map<String, Integer> byWeekday;
   private final Map<String, Integer> byTimeZone;

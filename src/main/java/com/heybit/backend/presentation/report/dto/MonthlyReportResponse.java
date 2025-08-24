@@ -14,7 +14,7 @@ public class MonthlyReportResponse {
   private final List<DailySummaryResponse> dailySummaries;
   private final SuccessRateResponse successRate;
   private final List<CategoryFailureResponse> categoryFailures;
-  private final DayAndTimeFailuresResponse dayAndTimeFailures;
+  private final DayAndTimeRegisteredCountsResponse registeredCounts;
 
   public MonthlyReportResponse(
       int year,
@@ -22,13 +22,13 @@ public class MonthlyReportResponse {
       List<DailySummaryResponse> dailySummaries,
       SuccessRateResponse successRate,
       List<CategoryFailureResponse> categoryFailures,
-      DayAndTimeFailuresResponse dayAndTimeFailures
+      DayAndTimeRegisteredCountsResponse registeredCounts
 ) {
     this.year = year;
     this.month = month;
     this.dailySummaries = dailySummaries;
     this.successRate = successRate;
     this.categoryFailures = categoryFailures;
-    this.dayAndTimeFailures = dayAndTimeFailures;
+    this.registeredCounts = registeredCounts;
   }
 }

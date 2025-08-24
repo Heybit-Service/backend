@@ -8,7 +8,7 @@ import com.heybit.backend.domain.report.stat.WeekdayStat;
 import com.heybit.backend.presentation.report.dto.CategoryFailureResponse;
 import com.heybit.backend.presentation.report.dto.CommonReportResponse;
 import com.heybit.backend.presentation.report.dto.DailySummaryResponse;
-import com.heybit.backend.presentation.report.dto.DayAndTimeFailuresResponse;
+import com.heybit.backend.presentation.report.dto.DayAndTimeRegisteredCountsResponse;
 import com.heybit.backend.presentation.report.dto.MonthSummaryResponse;
 import com.heybit.backend.presentation.report.dto.MonthlyReportResponse;
 import com.heybit.backend.presentation.report.dto.SuccessRateResponse;
@@ -56,7 +56,7 @@ public class ReportService {
         .dailySummaries(dailySummaries)
         .successRate(reportStats.getSuccessRate())
         .categoryFailures(reportStats.getCategoryFailures())
-        .dayAndTimeFailures(reportStats.getDayAndTimeFailures())
+        .registeredCounts(reportStats.getRegisteredCounts())
         .build();
   }
 
@@ -77,7 +77,7 @@ public class ReportService {
         .monthSummaries(monthSummaries)
         .successRate(reportStats.getSuccessRate())
         .categoryFailures(reportStats.getCategoryFailures())
-        .dayAndTimeFailures(reportStats.getDayAndTimeFailures())
+        .registeredCounts(reportStats.getRegisteredCounts())
         .build();
   }
 
@@ -88,7 +88,7 @@ public class ReportService {
 
     List<WeekdayStat> weekdayStats = reportRepository.fetchWeekdayStats(userId, start, end);
     List<TimeZoneStat> timeZoneStats = reportRepository.fetchTimeZoneStats(userId, start, end);
-    DayAndTimeFailuresResponse dayAndTimeFailures = buildDayAndTimeFailures(weekdayStats,
+    DayAndTimeRegisteredCountsResponse dayAndTimeFailures = buildDayAndTimeRegisteredCounts(weekdayStats,
         timeZoneStats);
 
     return new CommonReportResponse(successRate, categoryFailures, dayAndTimeFailures);
@@ -108,7 +108,7 @@ public class ReportService {
         .collect(Collectors.toList());
   }
 
-  private DayAndTimeFailuresResponse buildDayAndTimeFailures(List<WeekdayStat> weekdayStats,
+  private DayAndTimeRegisteredCountsResponse buildDayAndTimeRegisteredCounts(List<WeekdayStat> weekdayStats,
       List<TimeZoneStat> timeZoneStats) {
     Map<String, Integer> weekdayMap = new LinkedHashMap<>();
     for (DayOfWeek day : FIXED_WEEKDAYS) {
@@ -130,7 +130,7 @@ public class ReportService {
       }
     }
 
-    return DayAndTimeFailuresResponse.builder()
+    return DayAndTimeRegisteredCountsResponse.builder()
         .byWeekday(weekdayMap)
         .byTimeZone(timeZoneMap)
         .build();

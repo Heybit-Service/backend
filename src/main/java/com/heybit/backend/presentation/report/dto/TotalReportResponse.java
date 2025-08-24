@@ -12,19 +12,19 @@ public class TotalReportResponse {
   private final List<MonthSummaryResponse> monthSummaries;
   private final SuccessRateResponse successRate;
   private final List<CategoryFailureResponse> categoryFailures;
-  private final DayAndTimeFailuresResponse dayAndTimeFailures;
+  private final DayAndTimeRegisteredCountsResponse registeredCounts;
 
   public TotalReportResponse(
       long totalSavedAmount,
       List<MonthSummaryResponse> monthSummaries,
       SuccessRateResponse successRate,
       List<CategoryFailureResponse> categoryFailures,
-      DayAndTimeFailuresResponse dayAndTimeFailures
+      DayAndTimeRegisteredCountsResponse registeredCounts
   ) {
     this.totalSavedAmount = totalSavedAmount;
     this.monthSummaries = monthSummaries;
     this.successRate = successRate;
     this.categoryFailures = categoryFailures;
-    this.dayAndTimeFailures = dayAndTimeFailures;
+    this.registeredCounts = registeredCounts;
   }
 }

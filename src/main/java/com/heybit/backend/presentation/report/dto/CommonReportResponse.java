@@ -9,5 +9,5 @@ import lombok.Getter;
 public class CommonReportResponse {
   private final SuccessRateResponse successRate;
   private final List<CategoryFailureResponse> categoryFailures;
-  private final DayAndTimeFailuresResponse dayAndTimeFailures;
+  private final DayAndTimeRegisteredCountsResponse registeredCounts;
 }
