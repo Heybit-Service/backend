@@ -1,5 +1,7 @@
 package com.heybit.backend.security.config;
 
+import com.heybit.backend.security.jwt.JwtAccessDeniedHandler;
+import com.heybit.backend.security.jwt.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -16,6 +18,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
   private final JwtSecurityConfig jwtSecurityConfig;
+  private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+  private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
   
   @Autowired(required = false)
   private OAuth2SecurityConfig oAuth2SecurityConfig;
@@ -43,6 +47,10 @@ public class SecurityConfig {
         )
         .headers(headers -> headers
             .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin) // H2 콘솔사용
+        )
+        .exceptionHandling(exception -> exception
+            .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            .accessDeniedHandler(jwtAccessDeniedHandler)
         );
 
     // JWT 필터 설정 위임
