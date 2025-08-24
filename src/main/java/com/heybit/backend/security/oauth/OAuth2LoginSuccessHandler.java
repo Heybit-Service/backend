@@ -53,8 +53,6 @@ public class OAuth2LoginSuccessHandler implements
       targetUrl = baseUrl + "/dashboard/timer/progress?token=" + jwt;
     }
 
-    log.info("[OAuth2 Success] Origin = {}", baseUrl);
-    log.info("[OAuth2 Success] JWT Token = {}", jwt);
     log.info("[OAuth2 Success] Redirect URI = {}", targetUrl);
 
     clearAuthenticationAttributes(request);
@@ -78,14 +76,9 @@ public class OAuth2LoginSuccessHandler implements
     
     try {
       String decodedState = new String(Base64.getUrlDecoder().decode(state));
-      log.info("Decoded state: {}", decodedState);
       String[] parts = decodedState.split("\\|");
       if (parts.length >= 2) {
-        String origin = parts[1];
-        log.info("Extracted origin from state: {}", origin);
-        return origin;
-      } else {
-        log.warn("State does not contain origin separator. Parts length: {}", parts.length);
+        return parts[1];
       }
     } catch (Exception e) {
       log.warn("Failed to extract origin from state parameter", e);

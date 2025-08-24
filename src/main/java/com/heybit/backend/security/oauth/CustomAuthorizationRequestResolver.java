@@ -50,15 +50,11 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
     }
 
     String referer = request.getHeader("Referer");
-    log.info("OAuth2 Authorization Request - Referer: {}", referer);
     String origin = extractOrigin(referer);
-    log.info("Extracted origin from referer: {}", origin);
     
     if (origin != null && isAllowedOrigin(origin)) {
       Map<String, Object> additionalParameters = new HashMap<>(authorizationRequest.getAdditionalParameters());
-      String originalState = authorizationRequest.getState();
-      String stateData = encodeStateData(originalState, origin);
-      log.info("Encoded state data: original={}, origin={}, encoded={}", originalState, origin, stateData);
+      String stateData = encodeStateData(authorizationRequest.getState(), origin);
       
       return OAuth2AuthorizationRequest.from(authorizationRequest)
           .state(stateData)
@@ -66,7 +62,6 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
           .build();
     }
     
-    log.warn("Origin not allowed or null: {}", origin);
     return authorizationRequest;
   }
 
@@ -91,12 +86,9 @@ public class CustomAuthorizationRequestResolver implements OAuth2AuthorizationRe
     }
     
     Set<String> allowedSet = Set.of(allowedOrigins.split(","));
-    boolean isAllowed = allowedSet.stream()
+    return allowedSet.stream()
         .map(String::trim)
         .anyMatch(allowed -> allowed.equals(origin));
-    
-    log.info("Origin validation: {} is allowed: {}", origin, isAllowed);
-    return isAllowed;
   }
 
   private String encodeStateData(String originalState, String origin) {
