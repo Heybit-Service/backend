@@ -6,6 +6,7 @@ import com.heybit.backend.domain.report.stat.SuccessRateStat;
 import com.heybit.backend.domain.report.stat.TimeZoneStat;
 import com.heybit.backend.domain.report.stat.WeekdayStat;
 import com.heybit.backend.presentation.report.dto.CategoryFailureResponse;
+import com.heybit.backend.presentation.report.dto.CommonReportResponse;
 import com.heybit.backend.presentation.report.dto.DailySummaryResponse;
 import com.heybit.backend.presentation.report.dto.DayAndTimeFailuresResponse;
 import com.heybit.backend.presentation.report.dto.MonthSummaryResponse;
@@ -35,86 +36,73 @@ public class ReportService {
       List.of("NIGHT", "MORNING", "LUNCH", "AFTERNOON", "EVENING");
 
   private final ReportRepository reportRepository;
+  private final UserService userService;
 
   public MonthlyReportResponse getMonthlyReport(Long userId, YearMonth month) {
     LocalDateTime start = month.atDay(1).atStartOfDay();
     LocalDateTime end = month.atEndOfMonth().atTime(LocalTime.MAX);
-    return buildMonthlyReport(userId, start, end, month.getYear(), month.getMonthValue());
-  }
 
-  private MonthlyReportResponse buildMonthlyReport(
-      Long userId, LocalDateTime start, LocalDateTime end, int year, int month) {
+    CommonReportResponse reportStats = fetchReportStatistics(userId, start, end);
 
-    // 1) 일별 요약
-    List<DailySummaryResponse> dailySummaries = reportRepository.fetchDailySummaries(userId, start,
-            end)
-        .stream()
-        .map(DailySummaryResponse::from)
-        .collect(Collectors.toList());
-
-    // 2) 성공률
-    SuccessRateStat stat = reportRepository.fetchSuccessRate(userId, start, end);
-    SuccessRateResponse successRate = SuccessRateResponse.from(stat);
-
-    // 3) 카테고리별 실패 통계
-    long totalFailCount = reportRepository.fetchTotalFailCount(userId, start, end);
-    List<CategoryFailureResponse> categoryFailures = getCategoryFailures(userId, start, end,
-        totalFailCount);
-
-    // 4) 요일별/시간대별 타이머 통계
-    List<WeekdayStat> weekdayStats = reportRepository.fetchWeekdayStats(userId, start, end);
-    List<TimeZoneStat> timeZoneStats = reportRepository.fetchTimeZoneStats(userId, start, end);
-    DayAndTimeFailuresResponse dayAndTimeFailures = buildDayAndTimeFailures(weekdayStats,
-        timeZoneStats);
+    List<DailySummaryResponse> dailySummaries =
+        reportRepository.fetchDailySummaries(userId, start, end)
+            .stream()
+            .map(DailySummaryResponse::from)
+            .collect(Collectors.toList());
 
     return MonthlyReportResponse.builder()
-        .year(year)
-        .month(month)
+        .year(month.getYear())
+        .month(month.getMonthValue())
         .dailySummaries(dailySummaries)
-        .successRate(successRate)
-        .categoryFailures(categoryFailures)
-        .dayAndTimeFailures(dayAndTimeFailures)
+        .successRate(reportStats.getSuccessRate())
+        .categoryFailures(reportStats.getCategoryFailures())
+        .dayAndTimeFailures(reportStats.getDayAndTimeFailures())
         .build();
   }
 
-  public TotalReportResponse getTotalReport(Long userId, LocalDateTime joinedAt) {
+  public TotalReportResponse getTotalReport(Long userId) {
+    LocalDateTime joinedAt = userService.getById(userId).getCreatedAt();
     LocalDateTime start = joinedAt.toLocalDate().atStartOfDay();
     LocalDateTime end = LocalDateTime.now().with(LocalTime.MAX);
 
-    long totalSaved = reportRepository.fetchTotalSaved(userId, start, end);
+    CommonReportResponse reportStats = fetchReportStatistics(userId, start, end);
 
-    List<MonthSaveStat> monthly = reportRepository.fetchMonthlySaves(userId, start, end);
-    List<MonthSummaryResponse> monthSummaries = monthly.stream()
+    List<MonthSaveStat> monthlySaves = reportRepository.fetchMonthlySaves(userId, start, end);
+    List<MonthSummaryResponse> monthSummaries = monthlySaves.stream()
         .map(MonthSummaryResponse::from)
         .collect(Collectors.toList());
 
-    SuccessRateStat stat = reportRepository.fetchSuccessRate(userId, start, end);
-    SuccessRateResponse successRate = SuccessRateResponse.from(stat);
+    return TotalReportResponse.builder()
+        .totalSavedAmount(reportRepository.fetchTotalSaved(userId, start, end))
+        .monthSummaries(monthSummaries)
+        .successRate(reportStats.getSuccessRate())
+        .categoryFailures(reportStats.getCategoryFailures())
+        .dayAndTimeFailures(reportStats.getDayAndTimeFailures())
+        .build();
+  }
 
-    long totalFailCount = reportRepository.fetchTotalFailCount(userId, start, end);
-    List<CategoryFailureResponse> categoryFailures = getCategoryFailures(userId, start, end,
-        totalFailCount);
+  private CommonReportResponse fetchReportStatistics(Long userId, LocalDateTime start,
+      LocalDateTime end) {
+    SuccessRateResponse successRate = fetchSuccessRate(userId, start, end);
+    List<CategoryFailureResponse> categoryFailures = fetchCategoryFailures(userId, start, end);
 
     List<WeekdayStat> weekdayStats = reportRepository.fetchWeekdayStats(userId, start, end);
     List<TimeZoneStat> timeZoneStats = reportRepository.fetchTimeZoneStats(userId, start, end);
     DayAndTimeFailuresResponse dayAndTimeFailures = buildDayAndTimeFailures(weekdayStats,
         timeZoneStats);
 
-    return TotalReportResponse.builder()
-        .totalSavedAmount(totalSaved)
-        .monthSummaries(monthSummaries)
-        .successRate(successRate)
-        .categoryFailures(categoryFailures)
-        .dayAndTimeFailures(dayAndTimeFailures)
-        .build();
+    return new CommonReportResponse(successRate, categoryFailures, dayAndTimeFailures);
   }
 
-  private List<CategoryFailureResponse> getCategoryFailures(
-      Long userId,
-      LocalDateTime start,
-      LocalDateTime end,
-      long totalFailCount
-  ) {
+  private SuccessRateResponse fetchSuccessRate(Long userId, LocalDateTime start,
+      LocalDateTime end) {
+    SuccessRateStat stat = reportRepository.fetchSuccessRate(userId, start, end);
+    return SuccessRateResponse.from(stat);
+  }
+
+  private List<CategoryFailureResponse> fetchCategoryFailures(Long userId, LocalDateTime start,
+      LocalDateTime end) {
+    long totalFailCount = reportRepository.fetchTotalFailCount(userId, start, end);
     return reportRepository.fetchCategoryFailureStats(userId, start, end).stream()
         .map(stat -> CategoryFailureResponse.from(stat, totalFailCount))
         .collect(Collectors.toList());

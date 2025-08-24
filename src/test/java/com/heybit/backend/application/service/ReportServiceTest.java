@@ -179,7 +179,7 @@ class ReportServiceTest extends MysqlTestContainerBase {
     int currentYear = YearMonth.now().getYear();
 
     // when
-    TotalReportResponse response = reportService.getTotalReport(user.getId(), user.getCreatedAt());
+    TotalReportResponse response = reportService.getTotalReport(user.getId());
 
     // then
     assertThat(response.getTotalSavedAmount()).isEqualTo(2000 + 10000);
