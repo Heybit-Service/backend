@@ -4,6 +4,7 @@ import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.user.UserRepository;
 import com.heybit.backend.global.exception.ApiException;
 import com.heybit.backend.global.exception.ErrorCode;
+import com.heybit.backend.presentation.user.dto.UserProfileResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,5 +39,17 @@ public class UserService {
           log.error("USER_NOT_FOUND: userId={}", userId);
           return new ApiException(ErrorCode.USER_NOT_FOUND);
         });
+  }
+
+  @Transactional(readOnly = true)
+  public UserProfileResponse getUserProfile(Long userId) {
+    User user = getById(userId);
+    return UserProfileResponse.builder()
+        .id(user.getId())
+        .email(user.getEmail())
+        .nickname(user.getNickname())
+        .role(user.getRole())
+        .status(user.getStatus())
+        .build();
   }
 }
