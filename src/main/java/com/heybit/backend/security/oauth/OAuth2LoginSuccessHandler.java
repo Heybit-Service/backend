@@ -78,11 +78,14 @@ public class OAuth2LoginSuccessHandler implements
     
     try {
       String decodedState = new String(Base64.getUrlDecoder().decode(state));
+      log.info("Decoded state: {}", decodedState);
       String[] parts = decodedState.split("\\|");
       if (parts.length >= 2) {
         String origin = parts[1];
         log.info("Extracted origin from state: {}", origin);
         return origin;
+      } else {
+        log.warn("State does not contain origin separator. Parts length: {}", parts.length);
       }
     } catch (Exception e) {
       log.warn("Failed to extract origin from state parameter", e);
