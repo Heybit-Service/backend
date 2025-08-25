@@ -9,6 +9,7 @@ spring:
             authorization-grant-type: authorization_code
             client-id: ${KAKAO_CLIENT_ID}
             client-secret: ${KAKAO_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
           google:
             client-secret: ${GOOGLE_CLIENT_SECRET}
             client-id: ${GOOGLE_CLIENT_ID}
