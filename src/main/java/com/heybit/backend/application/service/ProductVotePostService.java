@@ -1,6 +1,7 @@
 package com.heybit.backend.application.service;
 
 import com.heybit.backend.domain.productinfo.ProductInfo;
+import com.heybit.backend.domain.timer.ProductTimer;
 import com.heybit.backend.domain.vote.VoteRepository;
 import com.heybit.backend.domain.vote.VoteRepository.VoteStats;
 import com.heybit.backend.domain.votepost.ProductVotePost;
@@ -30,13 +31,16 @@ public class ProductVotePostService {
 
     return posts.stream()
         .map(post -> {
-          ProductInfo info = post.getProductTimer().getProductInfo();
+          ProductTimer timer = post.getProductTimer();
+          ProductInfo info = timer.getProductInfo();
           return ProductVotePostResponse.builder()
               .votePostId(post.getId())
+              .writer(timer.getUser().getNickname())
               .name(info.getName())
               .amount(info.getAmount())
               .description(info.getDescription())
               .imageUrl(info.getImageUrl())
+              .endTime(timer.getEndTime())
               .build();
         })
         .toList();
@@ -55,8 +59,6 @@ public class ProductVotePostService {
         .map(ProductVotePost::getId)
         .collect(Collectors.toList());
 
-
-
     List<VoteRepository.VoteStats> statsList = voteRepository.countBuyHoldByPostIds(postIds);
 
     Map<Long, VoteStats> statsMap = statsList.stream()
@@ -66,7 +68,6 @@ public class ProductVotePostService {
         .map(post -> MyVotePostResponse.from(post, statsMap.get(post.getId())))
         .collect(Collectors.toList());
   }
-
 
   @Transactional
   public void deleteVotePost(Long votePostId, Long userId) {
@@ -93,5 +94,4 @@ public class ProductVotePostService {
           productVotePostRepository.delete(votePost);
         });
   }
-
 }

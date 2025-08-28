@@ -154,6 +154,7 @@ class ProductVotePostServiceTest {
 
     assertEquals(1, results.size());
     assertEquals("IN_PROGRESS 상품", results.get(0).getName());
+    assertEquals(user.getNickname(), results.get(0).getWriter());
   }
 
   @Test
