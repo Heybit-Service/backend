@@ -17,6 +17,7 @@ public enum ErrorCode {
   // User
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 사용자를 찾을 수 없습니다."),
   DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "이미 존재하는 닉네임입니다."),
+  DELETED_USER(HttpStatus.FORBIDDEN, "탈퇴한 회원입니다."),
 
   //Survey
   ALREADY_SURVEY(HttpStatus.BAD_REQUEST, "설문이 이미 존재합니다 "),

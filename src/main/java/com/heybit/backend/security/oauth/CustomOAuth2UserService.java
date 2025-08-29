@@ -2,6 +2,9 @@ package com.heybit.backend.security.oauth;
 
 import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.user.UserRepository;
+import com.heybit.backend.domain.user.UserStatus;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -32,6 +35,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     String email = attributes.getEmail();
 
     User user = userRepository.findByEmail(email)
+        .map(existingUser -> {
+          if (existingUser.getStatus() == UserStatus.DELETED) {
+            throw new ApiException(ErrorCode.DELETED_USER);
+          }
+          return existingUser;
+        })
         .orElseGet(() -> userRepository.save(attributes.toEntity()));
 
     return new CustomOAuth2User(
