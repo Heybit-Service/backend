@@ -18,6 +18,7 @@ public class ProductTimerDetailResponse {
   private String imageUrl;
   private int amount;
   private String status;
+  private String category;
   private LocalDateTime endTime;
   private boolean withVotePost;
   //투표가 있다면
@@ -33,6 +34,7 @@ public class ProductTimerDetailResponse {
         .imageUrl(info.getImageUrl())
         .amount(info.getAmount())
         .status(status)
+        .category(info.getCategory().toString())
         .endTime(timer.getEndTime())
         .withVotePost(false)
         .build();
@@ -45,6 +47,7 @@ public class ProductTimerDetailResponse {
         .description(info.getDescription())
         .imageUrl(info.getImageUrl())
         .amount(info.getAmount())
+        .category(info.getCategory().toString())
         .status(status)
         .endTime(timer.getEndTime())
         .withVotePost(true)

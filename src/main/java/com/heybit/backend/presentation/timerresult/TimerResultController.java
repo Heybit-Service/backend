@@ -26,7 +26,7 @@ public class TimerResultController {
     return ApiResponseEntity.success(resultId);
   }
 
-  @GetMapping("/api/v1/timer/history")
+  @GetMapping("/api/v1/timers/history")
   public ApiResponseEntity<List<CompletedTimerResponse>> getCompletedResultsByUserId(@LoginUser Long userId) {
     List<CompletedTimerResponse> responses = timerResultService.getCompletedResultsByUserId(userId);
     return ApiResponseEntity.success(responses);
