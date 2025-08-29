@@ -1,5 +1,7 @@
 package com.heybit.backend.presentation.user;
 
+import com.heybit.backend.application.service.ProductTimerService;
+import com.heybit.backend.application.service.ProductVotePostService;
 import com.heybit.backend.application.service.UserService;
 import com.heybit.backend.global.response.ApiResponseEntity;
 import com.heybit.backend.presentation.user.dto.UpdateNicknameRequest;
@@ -8,6 +10,7 @@ import com.heybit.backend.security.oauth.LoginUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +34,12 @@ public class UserController {
   public ApiResponseEntity<Boolean> checkNicknameDuplicate(@RequestParam String nickname) {
     boolean isDuplicate = userService.isNicknameDuplicated(nickname);
     return ApiResponseEntity.success(isDuplicate);
+  }
+
+  @PostMapping("me/deactivate")
+  public ApiResponseEntity<Void> deleteAccount(@LoginUser Long userId){
+    userService.deleteAccount(userId);
+    return ApiResponseEntity.success();
   }
 
   @PutMapping("/nickname")

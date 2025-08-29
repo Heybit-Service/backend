@@ -52,4 +52,10 @@ public class UserService {
         .status(user.getStatus())
         .build();
   }
+
+  @Transactional
+  public void deleteAccount(Long userId){
+    User user = getById(userId);
+    user.deleteUser();
+  }
 }

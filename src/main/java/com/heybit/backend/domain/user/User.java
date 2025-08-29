@@ -45,4 +45,7 @@ public class User extends BaseTimeEntity {
     this.nickname = newNickname;
   }
 
+  public void deleteUser() {
+    this.status = UserStatus.DELETED;
+  }
 }
