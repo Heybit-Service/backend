@@ -25,7 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/timer")
+@RequestMapping("/api/v1/timers")
 public class ProductTimerController {
 
   private final CreateTimerUseCase createTimerUseCase;
@@ -45,7 +45,7 @@ public class ProductTimerController {
     return ApiResponseEntity.success(productTimerService.getProductTimerDetail(userId, timerId));
   }
 
-  @PostMapping()
+  @PostMapping
   public ApiResponseEntity<Long> createTimer(
       @RequestPart("data") @Valid ProductTimerRequest request,
       @RequestPart(value = "img", required = false) MultipartFile img,
