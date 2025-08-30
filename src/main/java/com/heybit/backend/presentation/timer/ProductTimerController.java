@@ -60,6 +60,6 @@ public class ProductTimerController {
       @LoginUser Long userId,
       @PathVariable Long timerId
   ) {
-    deleteTimerUseCase.execute(userId, timerId);
+    deleteTimerUseCase.execute(timerId, userId);
   }
 }
