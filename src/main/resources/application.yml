@@ -3,7 +3,6 @@ server:
 
 jwt:
   secret: ${JWT_SECRET:thisisaverylongsecretkeyforjwttoken123456789012345678901234567890}
-
 app:
   frontend:
     base-url: ${FRONTEND_BASE_URL:http://localhost:3000}
@@ -21,20 +20,6 @@ spring:
   jpa:
     show-sql: true
     defer-datasource-initialization: true
-
-  quartz:
-    job-store-type: memory
-    scheduler:
-      instance-name: heybitScheduler
-    properties:
-      org:
-        quartz:
-          scheduler:
-            instanceId: AUTO
-          threadPool:
-            threadCount: 5
-          jobStore:
-            misfireThreshold: 60000
 
 springdoc:
   api-docs:
