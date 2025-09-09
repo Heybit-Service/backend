@@ -34,6 +34,8 @@ public class NotificationJobSchedulerFactory {
     JobDetail jobDetail = JobBuilder.newJob(NotificationJob.class)
         .withIdentity("NotificationJob_" + type, "TIMER_" + timerId)  // group = timerId
         .usingJobData(jobDataMap)
+        .storeDurably()
+        .requestRecovery(true)
         .build();
 
     Trigger trigger = TriggerBuilder.newTrigger()
