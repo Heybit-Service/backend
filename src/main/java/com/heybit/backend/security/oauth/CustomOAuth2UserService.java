@@ -37,7 +37,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     User user = userRepository.findByEmail(email)
         .map(existingUser -> {
           if (existingUser.getStatus() == UserStatus.DELETED) {
-            throw new ApiException(ErrorCode.DELETED_USER);
+            throw new OAuth2AuthenticationProcessingException(ErrorCode.DELETED_USER);
           }
           return existingUser;
         })
