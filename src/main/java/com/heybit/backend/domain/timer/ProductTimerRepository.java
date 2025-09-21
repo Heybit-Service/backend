@@ -19,4 +19,5 @@ public interface ProductTimerRepository extends JpaRepository<ProductTimer, Long
   List<ProductTimer> findUncompletedTimersByUserOrderByWaitingFirstAndEndTimeDesc(
       @Param("userId") Long userId);
 
+  List<ProductTimer> findAllByUserId(Long userId);
 }

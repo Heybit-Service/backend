@@ -3,6 +3,7 @@ package com.heybit.backend.presentation.user;
 import com.heybit.backend.application.service.ProductTimerService;
 import com.heybit.backend.application.service.ProductVotePostService;
 import com.heybit.backend.application.service.UserService;
+import com.heybit.backend.application.usecase.DeactivateUserUseCase;
 import com.heybit.backend.global.response.ApiResponseEntity;
 import com.heybit.backend.presentation.user.dto.UpdateNicknameRequest;
 import com.heybit.backend.presentation.user.dto.UserProfileResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
   private final UserService userService;
+  private final DeactivateUserUseCase deactivateUserUseCase;
 
   @GetMapping("/me")
   public ApiResponseEntity<UserProfileResponse> getCurrentUserProfile(@LoginUser Long userId) {
@@ -38,7 +40,7 @@ public class UserController {
 
   @PostMapping("me/deactivate")
   public ApiResponseEntity<Void> deleteAccount(@LoginUser Long userId){
-    userService.deleteAccount(userId);
+    deactivateUserUseCase.deactivate(userId);
     return ApiResponseEntity.success();
   }
 

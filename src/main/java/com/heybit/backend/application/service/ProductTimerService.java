@@ -74,4 +74,8 @@ public class ProductTimerService {
   void delete(ProductTimer timer) {
     productTimerRepository.delete(timer);
   }
+
+  public List<ProductTimer> findAllByUserId(Long userId) {
+    return productTimerRepository.findAllByUserId(userId);
+  }
 }
