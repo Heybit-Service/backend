@@ -20,6 +20,7 @@ public class ProductTimerDetailResponse {
   private String status;
   private String category;
   private LocalDateTime endTime;
+  private LocalDateTime startTime;
   private boolean withVotePost;
   //투표가 있다면
   private int buyCount;
@@ -36,6 +37,7 @@ public class ProductTimerDetailResponse {
         .status(status)
         .category(info.getCategory().toString())
         .endTime(timer.getEndTime())
+        .startTime(timer.getStartTime())
         .withVotePost(false)
         .build();
   }
@@ -50,6 +52,7 @@ public class ProductTimerDetailResponse {
         .category(info.getCategory().toString())
         .status(status)
         .endTime(timer.getEndTime())
+        .startTime(timer.getStartTime())
         .withVotePost(true)
         .buyCount(dto.getBuyCount())
         .holdCount(dto.getHoldCount())
