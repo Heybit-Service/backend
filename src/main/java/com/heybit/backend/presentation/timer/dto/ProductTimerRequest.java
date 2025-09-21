@@ -40,7 +40,6 @@ public class ProductTimerRequest {
   private LocalDateTime startTime;
 
   @NotNull
-  @Future
   @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
   private LocalDateTime endTime;
 

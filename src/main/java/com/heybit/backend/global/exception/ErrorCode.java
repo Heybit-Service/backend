@@ -25,6 +25,7 @@ public enum ErrorCode {
   //Timer
   TIMER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 타이머를 찾을 수 없습니다."),
   NOT_OWNER_OF_TIMER(HttpStatus.FORBIDDEN, "타이머에 대한 권한이 없습니다."),
+  INVALID_TIMER_TIME(HttpStatus.BAD_REQUEST, "타이머의 시작/종료 시간이 올바르지 않습니다."),
 
   //TimerResult
   ALREADY_REGISTERED_RESULT(HttpStatus.BAD_REQUEST, "타이머 결과가 이미 등록되어 있습니다."),

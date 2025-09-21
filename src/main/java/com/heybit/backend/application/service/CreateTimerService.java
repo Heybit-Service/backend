@@ -7,9 +7,13 @@ import com.heybit.backend.domain.timer.ProductTimer;
 import com.heybit.backend.domain.timer.TimerStatus;
 import com.heybit.backend.domain.user.User;
 import com.heybit.backend.domain.votepost.ProductVotePost;
+import com.heybit.backend.global.exception.ApiException;
+import com.heybit.backend.global.exception.ErrorCode;
 import com.heybit.backend.infrastructure.s3.S3UploadComponent;
 import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +31,8 @@ public class CreateTimerService implements CreateTimerUseCase {
 
   @Override
   public Long execute(ProductTimerRequest request, Long userId, MultipartFile imageFile) throws IOException {
+
+    validateTimes(request.getStartTime(), request.getEndTime());
 
     // 이미지가 존재할 경우 업로드
     String imageUrl = null;
@@ -72,4 +78,18 @@ public class CreateTimerService implements CreateTimerUseCase {
 
     return timer.getId();
   }
+
+  private void validateTimes(LocalDateTime startTime, LocalDateTime endTime) {
+    ZoneId kstZone = ZoneId.of("Asia/Seoul");
+    LocalDateTime nowKST = LocalDateTime.now(kstZone);
+
+    if (!startTime.isBefore(endTime)) {
+      throw new ApiException(ErrorCode.INVALID_TIMER_TIME);
+    }
+
+    if (!endTime.isAfter(nowKST)) {
+      throw new ApiException(ErrorCode.INVALID_TIMER_TIME);
+    }
+  }
 }
+
