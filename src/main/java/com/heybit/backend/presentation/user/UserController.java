@@ -38,7 +38,7 @@ public class UserController {
     return ApiResponseEntity.success(isDuplicate);
   }
 
-  @PostMapping("me/deactivate")
+  @PostMapping("/me/deactivate")
   public ApiResponseEntity<Void> deleteAccount(@LoginUser Long userId){
     deactivateUserUseCase.deactivate(userId);
     return ApiResponseEntity.success();
