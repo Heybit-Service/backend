@@ -37,7 +37,7 @@ public interface ReportRepository extends JpaRepository<TimerResult, Long> {
                   ELSE (SUM(CASE WHEN tr.result = 'SAVED' THEN 1 ELSE 0 END) * 1.0 / COUNT(tr)) * 100.0
              END AS successRate,
              COUNT(tr) AS totalCount,
-             SUM(CASE WHEN tr.result = 'SAVED' THEN 1 ELSE 0 END) AS successCount
+             COALESCE(SUM(CASE WHEN tr.result = 'SAVED' THEN 1 ELSE 0 END), 0) AS successCount
       FROM TimerResult tr
       JOIN tr.productTimer pt
       WHERE pt.user.id = :userId
