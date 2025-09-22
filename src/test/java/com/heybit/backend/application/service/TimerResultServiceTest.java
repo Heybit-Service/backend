@@ -3,7 +3,11 @@ package com.heybit.backend.application.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.tuple;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
+import com.heybit.backend.application.scheduler.TimerNotificationScheduler;
 import com.heybit.backend.domain.productinfo.Category;
 import com.heybit.backend.domain.productinfo.ProductInfo;
 import com.heybit.backend.domain.productinfo.ProductInfoRepository;
@@ -28,6 +32,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
@@ -48,6 +53,9 @@ class TimerResultServiceTest {
 
   @Autowired
   private ProductInfoRepository productInfoRepository;
+
+  @MockitoBean
+  private TimerNotificationScheduler timerNotificationScheduler;
 
   private User user;
 
@@ -96,6 +104,8 @@ class TimerResultServiceTest {
         LocalDateTime.now().plusHours(1)
     );
 
+    timer.updateState(TimerStatus.WAITING);
+
     TimerResultRequest request = TimerResultRequest.builder()
         .productTimerId(timer.getId())
         .result(ResultType.SAVED)
@@ -126,6 +136,8 @@ class TimerResultServiceTest {
         LocalDateTime.now().minusHours(1),
         LocalDateTime.now().plusHours(1)
     );
+
+    timer.updateState(TimerStatus.WAITING);
 
     TimerResultRequest request = TimerResultRequest.builder()
         .productTimerId(timer.getId())
@@ -195,5 +207,38 @@ class TimerResultServiceTest {
 
 
   }
+
+  @Test
+  @DisplayName("타이머를 포기할 때 결과 저장 및 스케줄러 취소 테스트")
+  void abandonTimerResult_successfully() {
+    // given
+    ProductTimer timer = createTimer("포기타이머",
+        5000,
+        LocalDateTime.now().minusHours(1),
+        LocalDateTime.now().plusHours(1)
+    );
+
+    TimerResultRequest request = TimerResultRequest.builder()
+        .productTimerId(timer.getId())
+        .result(ResultType.PURCHASED)
+        .amount(5000)
+        .build();
+
+    // when
+    timerResultService.abandonTimerResult(request);
+
+    // then
+    TimerResult savedResult = timerResultRepository.findByProductTimerId(timer.getId())
+        .orElseThrow(() -> new IllegalArgumentException("타이머 결과가 저장되지 않음"));
+
+    assertThat(savedResult.getResult()).isEqualTo(ResultType.PURCHASED);
+    assertThat(savedResult.getConsumedAmount()).isEqualTo(5000);
+
+    ProductTimer updatedTimer = productTimerRepository.findById(timer.getId())
+        .orElseThrow();
+    assertThat(updatedTimer.getStatus()).isEqualTo(TimerStatus.ABANDONED);
+    verify(timerNotificationScheduler, atLeastOnce()).cancelTimerNotificationJob(anyLong());
+  }
+
 }
 
