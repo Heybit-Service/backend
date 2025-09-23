@@ -9,8 +9,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class TimerResultRequest {
-  private Long productTimerId;
+  private Long timerId;
   private ResultType result;
-  private int amount;
-  private String userComment;
 }

@@ -107,9 +107,8 @@ class TimerResultServiceTest {
     timer.updateState(TimerStatus.WAITING);
 
     TimerResultRequest request = TimerResultRequest.builder()
-        .productTimerId(timer.getId())
+        .timerId(timer.getId())
         .result(ResultType.SAVED)
-        .amount(3000)
         .build();
 
     // when
@@ -140,9 +139,8 @@ class TimerResultServiceTest {
     timer.updateState(TimerStatus.WAITING);
 
     TimerResultRequest request = TimerResultRequest.builder()
-        .productTimerId(timer.getId())
+        .timerId(timer.getId())
         .result(ResultType.SAVED)
-        .amount(3000)
         .build();
 
     timerResultService.registerResult(request);
@@ -219,9 +217,8 @@ class TimerResultServiceTest {
     );
 
     TimerResultRequest request = TimerResultRequest.builder()
-        .productTimerId(timer.getId())
+        .timerId(timer.getId())
         .result(ResultType.PURCHASED)
-        .amount(5000)
         .build();
 
     // when

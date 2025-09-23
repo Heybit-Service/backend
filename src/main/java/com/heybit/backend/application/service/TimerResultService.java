@@ -28,7 +28,7 @@ public class TimerResultService {
 
   @Transactional
   public Long registerResult(TimerResultRequest request) {
-    ProductTimer timer = findTimerOrThrow(request.getProductTimerId());
+    ProductTimer timer = findTimerOrThrow(request.getTimerId());
 
     if (timer.getStatus() != TimerStatus.WAITING) {
       throw new ApiException(ErrorCode.INVALID_TIMER_STATE);
@@ -37,9 +37,8 @@ public class TimerResultService {
     TimerResult result = TimerResult.builder()
         .productTimer(timer)
         .result(request.getResult())
-        .savedAmount(request.getResult() == ResultType.SAVED ? request.getAmount() : 0)
-        .consumedAmount(request.getResult() == ResultType.PURCHASED ? request.getAmount() : 0)
-        .userComment(request.getUserComment())
+        .savedAmount(request.getResult() == ResultType.SAVED ? timer.getProductInfo().getAmount() : 0)
+        .consumedAmount(request.getResult() == ResultType.PURCHASED ?  timer.getProductInfo().getAmount() : 0)
         .build();
 
     timerResultRepository.save(result);
@@ -50,14 +49,13 @@ public class TimerResultService {
 
   @Transactional
   public Long abandonTimerResult(TimerResultRequest request) {
-    ProductTimer timer = findTimerOrThrow(request.getProductTimerId());
+    ProductTimer timer = findTimerOrThrow(request.getTimerId());
 
     TimerResult result =  TimerResult.builder()
         .productTimer(timer)
         .result(ResultType.PURCHASED)
         .savedAmount(0)
-        .consumedAmount(request.getAmount())
-        .userComment(request.getUserComment())
+        .consumedAmount(timer.getProductInfo().getAmount())
         .build();
 
     timerResultRepository.save(result);
