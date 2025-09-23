@@ -14,6 +14,9 @@ import com.heybit.backend.domain.votepost.ProductVotePost;
 import com.heybit.backend.domain.votepost.ProductVotePostRepository;
 import com.heybit.backend.presentation.timer.dto.ProductTimerRequest;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,12 +55,15 @@ class CreateTimerServiceTest {
         .status(UserStatus.ACTIVE)
         .build());
 
+    OffsetDateTime startTimeUTC = OffsetDateTime.now(ZoneOffset.UTC).plusHours(1);
+    OffsetDateTime endTimeUTC = OffsetDateTime.now(ZoneOffset.UTC).plusHours(2);
+
     ProductTimerRequest request = ProductTimerRequest.builder()
         .name("테스트 상품")
         .amount(15000)
         .category(Category.ETC)
-        .startTime(LocalDateTime.now().plusHours(1))
-        .endTime(LocalDateTime.now().plusHours(2))
+        .startTime(startTimeUTC)
+        .endTime(endTimeUTC)
         .withVotePost(true)
         .build();
 
@@ -68,11 +74,14 @@ class CreateTimerServiceTest {
     ProductTimer timer = productTimerRepository.findById(timerId)
         .orElseThrow(() -> new AssertionError("타이머가 저장되지 않았습니다."));
 
+    LocalDateTime expectedStartKST = startTimeUTC.atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+    LocalDateTime expectedEndKST = endTimeUTC.atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+
     assertEquals("테스트 상품", timer.getProductInfo().getName());
-    assertTrue(productTimerRepository.findById(timerId).isPresent());;
+    assertEquals(expectedStartKST, timer.getStartTime());
+    assertEquals(expectedEndKST, timer.getEndTime());
     assertTrue(productVotePostRepository.findByProductTimerId(timerId).isPresent());
   }
-
 
   @Test
   void createTimer_withoutVotePost_savesSuccessfully() throws Exception {
@@ -86,12 +95,15 @@ class CreateTimerServiceTest {
         .status(UserStatus.ACTIVE)
         .build());
 
+    OffsetDateTime startTimeUTC = OffsetDateTime.now(ZoneOffset.UTC).plusHours(1);
+    OffsetDateTime endTimeUTC = OffsetDateTime.now(ZoneOffset.UTC).plusHours(2);
+
     ProductTimerRequest request = ProductTimerRequest.builder()
         .name("테스트 상품2")
         .amount(5000)
         .category(Category.ETC)
-        .startTime(LocalDateTime.now().plusHours(1))
-        .endTime(LocalDateTime.now().plusHours(2))
+        .startTime(startTimeUTC)
+        .endTime(endTimeUTC)
         .withVotePost(false)
         .build();
 
@@ -101,8 +113,14 @@ class CreateTimerServiceTest {
     // then
     ProductTimer timer = productTimerRepository.findById(timerId)
         .orElseThrow(() -> new AssertionError("타이머가 저장되지 않았습니다."));
+
+    LocalDateTime expectedStartKST = startTimeUTC.atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+    LocalDateTime expectedEndKST = endTimeUTC.atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+
     assertEquals("테스트 상품2", timer.getProductInfo().getName());
-    assertTrue(productTimerRepository.findById(timerId).isPresent());;
+    assertEquals(expectedStartKST, timer.getStartTime());
+    assertEquals(expectedEndKST, timer.getEndTime());
     assertFalse(productVotePostRepository.findByProductTimerId(timerId).isPresent());
   }
+
 }

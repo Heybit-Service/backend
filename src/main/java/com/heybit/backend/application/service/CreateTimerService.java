@@ -31,8 +31,10 @@ public class CreateTimerService implements CreateTimerUseCase {
 
   @Override
   public Long execute(ProductTimerRequest request, Long userId, MultipartFile imageFile) throws IOException {
+    LocalDateTime startTime = request.getStartTimeAsLocal();
+    LocalDateTime endTime = request.getEndTimeAsLocal();
 
-    validateTimes(request.getStartTime(), request.getEndTime());
+    validateTimes(startTime, endTime);
 
     // 이미지가 존재할 경우 업로드
     String imageUrl = null;
@@ -53,8 +55,8 @@ public class CreateTimerService implements CreateTimerUseCase {
     ProductTimer timer = ProductTimer.builder()
         .user(user)
         .productInfo(info)
-        .startTime(request.getStartTime())
-        .endTime(request.getEndTime())
+        .startTime(startTime)
+        .endTime(endTime)
         .status(TimerStatus.IN_PROGRESS)
         .build();
 
