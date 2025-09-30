@@ -21,6 +21,11 @@ spring:
     show-sql: true
     defer-datasource-initialization: true
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
 springdoc:
   api-docs:
     enabled: true       # OpenAPI 문서 활성화
