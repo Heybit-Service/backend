@@ -30,6 +30,7 @@ jobs:
         mkdir -p deploy
         cp build/libs/*-SNAPSHOT.jar deploy/application.jar
         cp -r .ebextensions deploy/
+        cp -r .platform deploy/
         cp Procfile deploy/
         cd deploy && zip -r ../deploy.zip .
         
