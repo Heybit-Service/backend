@@ -1,4 +1,7 @@
 # Heybit-Service Backend
+<img width="525" height="228" alt="image" src="https://github.com/user-attachments/assets/109338b9-503c-48a9-a523-be6997b91925" />
+
+
 
 &nbsp;
 ## 📌 서비스 개요
